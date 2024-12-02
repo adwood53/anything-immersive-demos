@@ -11,7 +11,8 @@ function Content() {
 
   // Map of keys to URLs
   const urlMap = {
-    '3d-Model-AR': '/3D-Model-AR',
+    '3d-Model-AR':
+      'https://adwood53.github.io/anything-immersive-demos/3D-Model-AR',
     '360-environments': 'https://example.com/360-environments',
     'swipeable-2d-content':
       'https://example.com/swipeable-2d-content',
