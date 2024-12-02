@@ -14,8 +14,63 @@
   }
 }
 
+@font-face {
+  font-family: "Code Font Bold";
+  src: url("/fonts/code-font/code-bold.woff2") format("woff2"),
+       url("/fonts/code-font/code-bold.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Quantum";
+  src: url("/fonts/quantum/quantum.woff2") format("woff2"),
+       url("/fonts/quantum/quantum.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Neonize";
+  src: url("/fonts/neonize/neonize.woff2") format("woff2"),
+       url("/fonts/neonize/neonize.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+
+  --primary: #E79023;
+
+  --secondary-white: #DDDDDD;
+  --tertiary-white: #a7a7a7;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Exo 2";
+}
+
+a-scene {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.embed-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
 }
