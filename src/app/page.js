@@ -14,7 +14,7 @@ function Content() {
   // Map of keys to URLs
   const urlMap = {
     '3d-Model-AR': `${process.env.NEXT_PUBLIC_BASE_PATH}/3D-Model-AR`,
-    '360-environments': 'https://example.com/360-environments',
+    '3d-Model-VR': `${process.env.NEXT_PUBLIC_BASE_PATH}/3D-Model-VR`,
     'swipeable-2d-content':
       'https://example.com/swipeable-2d-content',
     weblinks: 'https://example.com/weblinks',

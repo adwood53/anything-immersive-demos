@@ -45,10 +45,8 @@ const Sidebar = () => {
               </button>
             </li>
             <li>
-              <button
-                onClick={() => handleNavClick('360-environments')}
-              >
-                360° Environments
+              <button onClick={() => handleNavClick('3d-Model-VR')}>
+                360° 3D Model (VR)
               </button>
             </li>
             <li>

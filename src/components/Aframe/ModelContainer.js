@@ -3,11 +3,16 @@
 import { useEffect } from 'react';
 import ControlButtons from './ControlButtons';
 
-function ModelContainer() {
+function ModelContainer({ rotateY = true, rotateZ = true }) {
   useEffect(() => {
     if (!window.AFRAME || AFRAME.components['model-control']) return;
 
     AFRAME.registerComponent('model-control', {
+      schema: {
+        rotateY: { type: 'boolean', default: true },
+        rotateZ: { type: 'boolean', default: true },
+      },
+
       init() {
         this.touchStart = { x: 0, y: 0 };
         this.currentRotation = { y: 90, z: 0 };
@@ -49,11 +54,15 @@ function ModelContainer() {
           const currentY =
             e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
 
-          const deltaX = currentX - this.touchStart.x;
-          const deltaY = currentY - this.touchStart.y;
+          if (this.data.rotateY) {
+            const deltaX = currentX - this.touchStart.x;
+            this.currentRotation.y += deltaX * 0.25;
+          }
 
-          this.currentRotation.y += deltaX * 0.25;
-          this.currentRotation.z += deltaY * 0.25;
+          if (this.data.rotateZ) {
+            const deltaY = currentY - this.touchStart.y;
+            this.currentRotation.z += deltaY * 0.25;
+          }
 
           this.updateRotation();
 
@@ -113,7 +122,7 @@ function ModelContainer() {
         position="0 0.5 -1"
         scale="1 1 1"
         rotation="0 90 0"
-        model-control
+        model-control={`rotateY: ${rotateY}; rotateZ: ${rotateZ}`}
         shadow
       >
         <a-entity

@@ -1,7 +1,12 @@
 'use client';
 import { useEffect } from 'react';
 
-function ARCamera() {
+function Camera({
+  isAR = false,
+  enableWASD = false,
+  enableLook = true,
+  position = '0 0.4 0',
+}) {
   useEffect(() => {
     if (
       !window.AFRAME ||
@@ -72,13 +77,15 @@ function ARCamera() {
 
   return (
     <a-camera
-      position="0 0.4 0"
-      wasd-controls="enabled: false"
-      look-controls="enabled: false"
+      position={position}
+      wasd-controls={`enabled: ${enableWASD}`}
+      look-controls={`enabled: ${enableLook}`}
     >
-      <a-entity camera-background-plane="distance: -3"></a-entity>
+      {isAR && (
+        <a-entity camera-background-plane="distance: -3"></a-entity>
+      )}
     </a-camera>
   );
 }
 
-export default ARCamera;
+export default Camera;

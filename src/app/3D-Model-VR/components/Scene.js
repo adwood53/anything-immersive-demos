@@ -4,6 +4,7 @@ import Camera from '@/components/Aframe/Camera';
 import Lighting from '@/components/Aframe/Lighting';
 import ModelContainer from '@/components/Aframe/ModelContainer';
 import Plane from '@/components/Aframe/Plane';
+import SkyImage from '@/components/Aframe/SkyImage';
 
 function Scene() {
   const [isAframeLoaded, setIsAframeLoaded] = useState(false);
@@ -31,11 +32,16 @@ function Scene() {
           src={`${basePath}/3D-Model-AR/your-model.glb`}
           response-type="arraybuffer"
         ></a-asset-item>
+        <img
+          id="sky"
+          src={`${basePath}/3D-Model-VR/puydesancy.jpg`}
+        />
       </a-assets>
-      <Camera isAR={true} enableWASD={false} enableLook={false} />
+      <Camera isAR={false} enableWASD={false} enableLook={true} />
       <Lighting />
-      <ModelContainer />
+      <ModelContainer rotateY={true} rotateZ={false} />
       <Plane />
+      <SkyImage />
     </a-scene>
   );
 }
