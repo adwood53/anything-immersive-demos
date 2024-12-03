@@ -5,7 +5,7 @@ function Lighting() {
     <a-entity>
       <a-entity
         id="sun"
-        light="type: directional; color: #e85b1a; intensity: 0.9; castShadow: true; shadowCameraFar: 500;
+        light="type: directional; color: #FFFFFF; intensity: 0.9; castShadow: true; shadowCameraFar: 500;
           shadowCameraVisible: false;
           shadowBias: -0.001;
           shadowMapHeight:2048; shadowMapWidth:2048;
@@ -13,9 +13,9 @@ function Lighting() {
           shadowCameraBottom: -5; shadowCameraTop: 5;"
         position="10 50 -10"
       ></a-entity>
-      <a-entity light="type: ambient; intensity:0.15; color: #FFFFF"></a-entity>
-      <a-entity light="type: point; intensity:1; color: #FFFFF"></a-entity>
-      <a-entity light="type: hemisphere; color: #33C; groundColor: #3C3; intensity: 0"></a-entity>
+      <a-entity light="type: hemisphere; color: #c9f6ff; groundColor: #0ba11f; intensity: 0.7"></a-entity>
+      <a-entity light="type: point; intensity:1; color: #FFFFFF"></a-entity>
+      <a-entity light="type: ambient; intensity:0.3; color: #FFFFFF"></a-entity>
     </a-entity>
   );
 }

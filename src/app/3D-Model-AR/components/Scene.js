@@ -34,7 +34,7 @@ function Scene() {
       </a-assets>
       <Camera isAR={true} enableWASD={false} enableLook={false} />
       <Lighting />
-      <ModelContainer />
+      <ModelContainer format="gltf" />
       <Plane />
     </a-scene>
   );

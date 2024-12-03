@@ -29,7 +29,7 @@ function Scene() {
       <a-assets>
         <a-asset-item
           id="model"
-          src={`${basePath}/3D-Model-AR/your-model.glb`}
+          src={`${basePath}/3D-Model-VR/idle-automaton.glb`}
           response-type="arraybuffer"
         ></a-asset-item>
         <img
@@ -37,9 +37,23 @@ function Scene() {
           src={`${basePath}/3D-Model-VR/puydesancy.jpg`}
         />
       </a-assets>
-      <Camera isAR={false} enableWASD={false} enableLook={true} />
+      <Camera
+        isAR={false}
+        enableWASD={false}
+        enableLook={true}
+        position="0 0.8 0"
+      />
       <Lighting />
-      <ModelContainer rotateY={true} rotateZ={false} />
+      <ModelContainer
+        format="gltf"
+        rotateY={false}
+        rotateZ={false}
+        modelPosition="0.5 -1 -1"
+        frustumCulled={false}
+        animationEnabled={true}
+        useRegExp={true}
+        animationClip="mixamo.com|Layer0.001"
+      />
       <Plane />
       <SkyImage />
     </a-scene>
