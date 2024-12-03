@@ -8,6 +8,9 @@ import Plane from './Plane';
 function Scene() {
   const [isAframeLoaded, setIsAframeLoaded] = useState(false);
 
+  // In App Router, basePath is available from the environment
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+
   useEffect(() => {
     if (typeof window !== 'undefined' && window.AFRAME) {
       setIsAframeLoaded(true);
@@ -25,7 +28,7 @@ function Scene() {
       <a-assets>
         <a-asset-item
           id="model"
-          src="/3D-Model-AR/your-model.glb"
+          src={`${basePath}/3D-Model-AR/your-model.glb`}
           response-type="arraybuffer"
         ></a-asset-item>
       </a-assets>
