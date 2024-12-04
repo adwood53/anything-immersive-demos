@@ -1,17 +1,16 @@
 'use client';
 import { useEffect } from 'react';
-import ControlButtons from './ControlButtons';
 
 function ModelContainer({
-  format = 'gltf', // Determines if GLTF or OBJ format is used
+  format = 'gltf',
   rotateY = true,
   rotateZ = true,
   position = '0 0.5 -1',
   rotation = '0 0 0',
   modelPosition = '0 -0.25 0',
   frustumCulled = true,
-  animationEnabled = false, // Default to true for GLTF, auto-disabled for OBJ
-  animationClip = '*', // Default to play all clips
+  animationEnabled = false,
+  animationClip = '*',
   useRegExp = false,
   duration = 0,
   crossFadeDuration = 0,
@@ -20,6 +19,10 @@ function ModelContainer({
   timeScale = 1,
   clampWhenFinished = false,
   startAt = 0,
+  modelId = '',
+  assetId = 'model',
+  mtlAssetId = 'material',
+  selectable = true,
 }) {
   useEffect(() => {
     if (!window.AFRAME) return;
@@ -45,15 +48,74 @@ function ModelContainer({
         schema: {
           rotateY: { type: 'boolean', default: true },
           rotateZ: { type: 'boolean', default: true },
+          modelId: { type: 'string' },
+          selectable: { type: 'boolean', default: true },
         },
 
         init() {
+          // Get initial position from the entity
+          const position = this.el.object3D.position;
+          this.initialPosition = {
+            x: position.x,
+            y: position.y,
+            z: position.z,
+          };
+          this.currentPosition = { ...this.initialPosition };
+
           this.touchStart = { x: 0, y: 0 };
           this.currentRotation = { y: 90, z: 0 };
           this.isRotating = false;
-          this.currentZ = -1;
+          this.isSelected = false;
           this.setupTouchEvents();
+          this.setupSelectionEvents();
           this.updateRotation();
+
+          // Register with scene
+          const event = new CustomEvent('model-registered', {
+            detail: {
+              modelId: this.data.modelId,
+              element: this.el,
+            },
+          });
+          this.el.sceneEl.dispatchEvent(event);
+        },
+
+        remove() {
+          const event = new CustomEvent('model-unregistered', {
+            detail: { modelId: this.data.modelId },
+          });
+          this.el.sceneEl.dispatchEvent(event);
+        },
+
+        setupSelectionEvents() {
+          if (!this.data.selectable) return;
+
+          this.el.classList.add('selectable');
+
+          this.el.addEventListener('click', () => {
+            this.isSelected = !this.isSelected;
+            this.el.emit('model-selection-changed', {
+              modelId: this.data.modelId,
+              selected: this.isSelected,
+            });
+
+            this.el.setAttribute(
+              'scale',
+              this.isSelected ? '1.1 1.1 1.1' : '1 1 1'
+            );
+          });
+
+          this.el.addEventListener('mouseenter', () => {
+            if (!this.isSelected) {
+              this.el.setAttribute('scale', '1.05 1.05 1.05');
+            }
+          });
+
+          this.el.addEventListener('mouseleave', () => {
+            if (!this.isSelected) {
+              this.el.setAttribute('scale', '1 1 1');
+            }
+          });
         },
 
         setupTouchEvents() {
@@ -125,15 +187,23 @@ function ModelContainer({
         },
 
         updatePosition(delta) {
-          this.currentZ += delta;
-          this.currentZ = Math.max(-2, Math.min(-0.3, this.currentZ));
-          this.el.object3D.position.z = this.currentZ;
+          this.currentPosition.z += delta;
+          // Use initial position as reference for limits
+          this.currentPosition.z = Math.max(
+            this.initialPosition.z - 1,
+            Math.min(
+              this.initialPosition.z + 0.7,
+              this.currentPosition.z
+            )
+          );
+          this.el.object3D.position.z = this.currentPosition.z;
         },
 
         resetModel() {
-          this.currentZ = -1;
+          // Reset to initial position
+          this.currentPosition = { ...this.initialPosition };
           this.currentRotation = { y: 90, z: 0 };
-          this.el.object3D.position.z = this.currentZ;
+          this.el.object3D.position.copy(this.initialPosition);
           this.updateRotation();
         },
 
@@ -152,7 +222,6 @@ function ModelContainer({
       });
     }
 
-    // Register animation-mixer-control
     if (!AFRAME.components['animation-mixer-control']) {
       AFRAME.registerComponent('animation-mixer-control', {
         schema: {
@@ -169,49 +238,56 @@ function ModelContainer({
         },
 
         init() {
-          this.el.addEventListener('model-loaded', () => {
-            if (!this.data.enabled) return;
+          const self = this;
 
-            const model = this.el.getObject3D('mesh');
-            if (!model) return;
+          this.el.addEventListener(
+            'model-loaded',
+            function setupAnimation() {
+              if (!self.data.enabled) return;
 
-            const mixer = new THREE.AnimationMixer(model);
-            const animations = model.animations || this.el.animations;
+              const model = self.el.getObject3D('mesh');
+              if (!model) return;
 
-            const clipName = this.data.useRegExp
-              ? new RegExp(this.data.clip)
-              : this.data.clip;
+              const mixer = new THREE.AnimationMixer(model);
+              const animations =
+                model.animations || self.el.animations;
+              if (!animations) return;
 
-            const clips = animations.filter((clip) =>
-              typeof clipName === 'string'
-                ? clip.name === clipName
-                : clipName.test(clip.name)
-            );
+              const clipName = self.data.useRegExp
+                ? new RegExp(self.data.clip)
+                : self.data.clip;
 
-            if (clips.length) {
-              clips.forEach((clip) => {
-                const action = mixer.clipAction(clip);
-                action.loop =
-                  this.data.loop === 'once'
-                    ? THREE.LoopOnce
-                    : this.data.loop === 'pingpong'
-                    ? THREE.LoopPingPong
-                    : THREE.LoopRepeat;
+              const clips = animations.filter((clip) =>
+                typeof clipName === 'string'
+                  ? clip.name === clipName
+                  : clipName.test(clip.name)
+              );
 
-                action.repetitions =
-                  this.data.loop === 'once'
-                    ? 1
-                    : this.data.repetitions;
-                action.clampWhenFinished =
-                  this.data.clampWhenFinished;
-                action.timeScale = this.data.timeScale;
-                action.startAt = this.data.startAt;
-                action.play();
-              });
+              if (clips.length) {
+                clips.forEach((clip) => {
+                  const action = mixer.clipAction(clip);
+                  action.loop =
+                    self.data.loop === 'once'
+                      ? THREE.LoopOnce
+                      : self.data.loop === 'pingpong'
+                      ? THREE.LoopPingPong
+                      : THREE.LoopRepeat;
+
+                  action.repetitions =
+                    self.data.loop === 'once'
+                      ? 1
+                      : self.data.repetitions;
+                  action.clampWhenFinished =
+                    self.data.clampWhenFinished;
+                  action.timeScale = self.data.timeScale;
+                  action.startAt = self.data.startAt;
+                  action.play();
+                });
+              }
+
+              self.mixer = mixer;
             }
-
-            this.mixer = mixer;
-          });
+          );
         },
 
         tick(time, delta) {
@@ -220,47 +296,66 @@ function ModelContainer({
       });
     }
 
-    // Set up model loading based on format
-    if (format === 'obj') {
-      const modelEntity = document.querySelector('[obj-model]');
-      if (modelEntity) {
+    // Update model loading based on format and specific model entity
+    const modelEntity = document.querySelector(
+      `#model-container-${modelId} [${
+        format === 'gltf' ? 'gltf-model' : 'obj-model'
+      }]`
+    );
+    if (modelEntity) {
+      if (format === 'obj') {
         modelEntity.setAttribute(
           'obj-model',
-          'obj: #model; mtl: #material'
+          `obj: #${assetId}; mtl: #${mtlAssetId}`
         );
-      }
-    } else {
-      const modelEntity = document.querySelector('[gltf-model]');
-      if (modelEntity) {
-        modelEntity.setAttribute('gltf-model', '#model');
+      } else {
+        modelEntity.setAttribute('gltf-model', `#${assetId}`);
       }
     }
-  }, [format]);
+  }, [format, assetId, mtlAssetId, modelId]);
 
   const modelProps =
     format === 'gltf'
-      ? { 'gltf-model': '#model' }
-      : { 'obj-model': 'obj: #model; mtl: #material' };
+      ? { 'gltf-model': `#${assetId}` }
+      : { 'obj-model': `obj: #${assetId}; mtl: #${mtlAssetId}` };
 
   return (
-    <>
+    <a-entity
+      id={`model-container-${modelId}`}
+      class="model-container"
+      position={position}
+      scale="1 1 1"
+      rotation={rotation}
+      model-control={`
+        rotateY: ${rotateY}; 
+        rotateZ: ${rotateZ}; 
+        modelId: ${modelId};
+        selectable: ${selectable}
+      `}
+    >
       <a-entity
-        id="model-container"
-        position={position}
-        scale="1 1 1"
-        rotation={rotation}
-        model-control={`rotateY: ${rotateY}; rotateZ: ${rotateZ}`}
-      >
-        <a-entity
-          {...modelProps}
-          position={modelPosition}
-          shadow="cast: true; receive: true"
-          {...(!frustumCulled && { 'disable-culling': '' })}
-          animation-mixer-control={`enabled: ${animationEnabled}; clip: ${animationClip}; useRegExp: ${useRegExp}; duration: ${duration}; crossFadeDuration: ${crossFadeDuration}; loop: ${loop}; repetitions: ${repetitions}; timeScale: ${timeScale}; clampWhenFinished: ${clampWhenFinished}; startAt: ${startAt}`}
-        ></a-entity>
-      </a-entity>
-      <ControlButtons />
-    </>
+        {...modelProps}
+        position={modelPosition}
+        shadow="cast: true; receive: true"
+        disable-culling={!frustumCulled ? '' : undefined}
+        {...(animationEnabled
+          ? {
+              'animation-mixer-control': `
+            enabled: ${animationEnabled}; 
+            clip: ${animationClip}; 
+            useRegExp: ${useRegExp}; 
+            duration: ${duration}; 
+            crossFadeDuration: ${crossFadeDuration}; 
+            loop: ${loop}; 
+            repetitions: ${repetitions}; 
+            timeScale: ${timeScale}; 
+            clampWhenFinished: ${clampWhenFinished}; 
+            startAt: ${startAt}
+          `,
+            }
+          : {})}
+      ></a-entity>
+    </a-entity>
   );
 }
 
