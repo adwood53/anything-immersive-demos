@@ -19,7 +19,7 @@ const exo2 = Exo_2({
 });
 
 export const metadata = {
-  title: 'Voyager NPC Demos',
+  title: 'Voyager NFC Demos',
   description: 'Showcasing examples using XR and NFC technology.',
 };
 

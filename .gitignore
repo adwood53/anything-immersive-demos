@@ -38,3 +38,22 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# SLAM
+.*
+!.babelrc
+!.gitignore
+!.prettierrc
+!.editorconfig
+!.eslintrc.json
+!.prettierrc
+!.eslintignore
+!.buildpacks
+
+__pycache__
+
+build/*
+cmake-build-debug/*
+
+.idea/
+*.iml

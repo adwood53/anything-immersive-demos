@@ -61,6 +61,11 @@ const Sidebar = () => {
                 WebLinks
               </button>
             </li>
+            <li>
+              <button onClick={() => handleNavClick('SLAM-Test')}>
+                SLAM Test
+              </button>
+            </li>
           </ul>
         </div>
       </div>

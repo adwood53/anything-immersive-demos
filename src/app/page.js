@@ -15,9 +15,9 @@ function Content() {
   const urlMap = {
     '3d-Model-AR': `${process.env.NEXT_PUBLIC_BASE_PATH}/3D-Model-AR`,
     '3d-Model-VR': `${process.env.NEXT_PUBLIC_BASE_PATH}/3D-Model-VR`,
-    'swipeable-2d-content':
-      'https://example.com/swipeable-2d-content',
-    weblinks: 'https://example.com/weblinks',
+    'swipeable-2d-content': 'https://example.com/swipeable-2d-content',
+    'weblinks': 'https://example.com/weblinks',
+    'SLAM-Test': `${process.env.NEXT_PUBLIC_BASE_PATH}/SLAM-Test`
   };
 
   const iframeUrl = iframeSrc && urlMap[iframeSrc];

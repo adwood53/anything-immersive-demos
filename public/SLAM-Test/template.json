@@ -1,0 +1,6 @@
+{
+  "background": {
+    "type": "360image",
+    "url": "/path-to-image.jpg"
+  }
+}
