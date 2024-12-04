@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import styles from './DeviceCamera.module.css';
 
-const DeviceCamera = () => {
+const DeviceCamera = ({ facingMode }) => {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
 
@@ -22,7 +22,7 @@ const DeviceCamera = () => {
 
       const config = {
         video: {
-          facingMode: 'environment',
+          facingMode: facingMode,
           aspectRatio: 16 / 9,
           width: { ideal: 1280 },
         },
@@ -72,7 +72,7 @@ const DeviceCamera = () => {
     initializeSLAM().catch((error) => {
       console.error('Error initializing SLAM:', error);
     });
-  }, []);
+  }, [facingMode]);
 
   return (
     <div>

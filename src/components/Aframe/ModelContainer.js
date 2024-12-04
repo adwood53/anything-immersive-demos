@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import ControlButtons from './ControlButtons';
 
-function ModelContainer({ rotateY = true, rotateZ = true }) {
+function ModelContainer({ position, rotation, scale, modelId, rotateY = true, rotateZ = true }) {
   useEffect(() => {
     if (!window.AFRAME || AFRAME.components['model-control']) return;
 
@@ -109,7 +109,7 @@ function ModelContainer({ rotateY = true, rotateZ = true }) {
       },
     });
     const modelEntity = document.querySelector('[gltf-model]');
-    modelEntity?.setAttribute('gltf-model', '#model');
+    modelEntity?.setAttribute('gltf-model', modelId);
 
     const envEntity = document.querySelector('[envMap]');
     envEntity?.setAttribute('envMap', '#reflection');
@@ -126,8 +126,10 @@ function ModelContainer({ rotateY = true, rotateZ = true }) {
         shadow
       >
         <a-entity
-          gltf-model="#model"
-          position="0 -0.25 0"
+          gltf-model={modelId}
+          position={position}
+          rotation={rotation}
+          scale={scale}
           shadow="cast: true; receive: true"
           material="roughness: 0.7; metalness: 0;"
         ></a-entity>

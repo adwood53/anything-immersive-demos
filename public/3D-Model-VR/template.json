@@ -1,8 +1,7 @@
 {
   "background": {
-    "type": "devicecamera",
-    "facingMode": "environment",
-    "useSlam" : true
+    "type": "360image",
+    "url": "3D-Model-VR/puydesancy.jpg"
   },
   "camera" : {
     "enableWASD": false,
