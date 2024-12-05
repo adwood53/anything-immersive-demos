@@ -1,0 +1,55 @@
+{
+  "background": {
+    "type": "360image",
+    "url": "3D-Model-VR/puydesancy.jpg"
+  },
+  "camera" : {
+    "enableWASD": false,
+    "enableLook": true,
+    "position" : "0 1.6 0",
+    "raycastType" : "gazeclick"
+  },
+  "lighting" : {
+  },
+  "objects": [
+    {
+      "format" : "gltf",
+      "rotateY" : true,
+      "rotateZ" : false,
+      "position" : "1 1.5 -2",
+      "rotation" : "0 0 0",
+      "modelPosition" : "0 -0.25 0",
+      "modelId" : "model2",
+      "assetId" : "model2",
+      "selectable" : true,
+      "interactive" : true,
+      "highlightColor" : "00ff00",
+      "modelUrl": "3D-Model-AR/your-model.glb"
+    },
+    {
+      "format" : "gltf",
+      "rotateY" : true,
+      "rotateZ" : true,
+      "position" : "-1 0 -2",
+      "scale" : "1 1 1",
+      "modelPosition" : "0 0 0",
+      "frustumCulled" : false,
+      "animationEnabled" : true,
+      "animationClip" : "mixamo.com|Layer0.001",
+      "useRegExp" : true,
+      "modelId" : "model1",
+      "assetId" : "model1",
+      "selectable" : true,
+      "interactive" : true,
+      "highlightColor" : "00ff00",
+      "modelUrl": "3D-Model-VR/idle-automaton.glb"
+    }
+  ],
+  "shadow" : {
+  },
+  "controlButtons" : {
+    "effectAll" : true,
+    "selectionMode" : "gaze",
+    "gazeTimeout" : 1
+  }
+}

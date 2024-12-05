@@ -93,26 +93,3 @@
         opacity: 1;
     }
 }
-
-/* Media query for landscape orientation */
-@media screen and (max-device-width: 480px) and (orientation: landscape) {
-    .container {
-        display: none;
-    }
-
-    body::before {
-        content: "Rotate device to portrait mode.";
-        color: white;
-    }
-}
-
-/* Media query for portrait orientation */
-@media screen and (max-device-width: 480px) and (orientation: portrait) {
-    .container {
-        display: block;
-    }
-
-    body::before {
-        content: none;
-    }
-}

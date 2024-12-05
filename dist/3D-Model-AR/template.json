@@ -1,0 +1,22 @@
+{
+  "background" : {
+    "type" : "devicecamera",
+    "facingMode" : "environment",
+    "useSlam" : true
+  },
+  "camera" : {
+    "enableWASD" : false,
+    "enableLook" : false
+  },
+  "lighting" : {
+  },
+  "objects" : [
+    {
+      "format" : "gltf",
+      "modelId" : "prism",
+      "assetId" : "prism",
+      "modelUrl": "3D-Model-AR/your-model.glb"
+    }
+  ],
+  "shadow" : {}
+}

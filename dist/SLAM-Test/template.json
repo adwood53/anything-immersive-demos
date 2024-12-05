@@ -1,0 +1,22 @@
+{
+  "background": {
+    "type": "devicecamera",
+    "facingMode": "environment",
+    "useSlam" : true
+  },
+  "camera" : {
+    "enableWASD": false,
+    "enableLook": false
+  },
+  "lighting" : {
+  },
+  "objects": [
+    {
+      "position": "0 -0.25 0",
+      "rotation": "0 0 0",
+      "scale": "1 1 1",
+      "modelId": "voyager",
+      "modelUrl": "3D-Model-AR/your-model.glb"
+    }
+  ]
+}
