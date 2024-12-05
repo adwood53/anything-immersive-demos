@@ -1,29 +1,32 @@
 'use client';
 import { useEffect } from 'react';
 
-function ModelContainer({
-  format = 'gltf',
-  rotateY = true,
-  rotateZ = true,
-  position = '0 0.5 -1',
-  rotation = '0 0 0',
-  modelPosition = '0 -0.25 0',
-  frustumCulled = true,
-  animationEnabled = false,
-  animationClip = '*',
-  useRegExp = false,
-  duration = 0,
-  crossFadeDuration = 0,
-  loop = 'repeat',
-  repetitions = Infinity,
-  timeScale = 1,
-  clampWhenFinished = false,
-  startAt = 0,
-  modelId = '',
-  assetId = 'model',
-  mtlAssetId = 'material',
-  selectable = true,
-}) {
+function ModelContainer({ config = {} }) {
+  const {
+    format = 'gltf',
+    rotateY = true,
+    rotateZ = true,
+    position = '0 0.5 -1',
+    rotation = '0 0 0',
+    scale = '1 1 1',
+    modelPosition = '0 -0.25 0',
+    frustumCulled = true,
+    animationEnabled = false,
+    animationClip = '*',
+    useRegExp = false,
+    duration = 0,
+    crossFadeDuration = 0,
+    loop = 'repeat',
+    repetitions = Infinity,
+    timeScale = 1,
+    clampWhenFinished = false,
+    startAt = 0,
+    modelId = '',
+    assetId = 'model',
+    mtlAssetId = 'material',
+    selectable = true,
+  } = config; // Destructure the config object
+  
   useEffect(() => {
     if (!window.AFRAME) return;
 
@@ -312,7 +315,7 @@ function ModelContainer({
         modelEntity.setAttribute('gltf-model', `#${assetId}`);
       }
     }
-  }, [format, assetId, mtlAssetId, modelId]);
+  }, [config]);
 
   const modelProps =
     format === 'gltf'
@@ -324,7 +327,7 @@ function ModelContainer({
       id={`model-container-${modelId}`}
       class="model-container"
       position={position}
-      scale="1 1 1"
+      scale={scale}
       rotation={rotation}
       model-control={`
         rotateY: ${rotateY}; 

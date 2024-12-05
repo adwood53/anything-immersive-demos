@@ -44,9 +44,17 @@ function Scene({ template }) {
     template.objects != null,
     'Aframe/ModelContainer'
   );
+  const Plane = getComponent(
+    template.shadow,
+    'Aframe/Plane'
+  );
   const SkyImage = getComponent(
     template.background.type === "360image",
     'Aframe/SkyImage'
+  );
+  const ControlButtons = getComponent(
+    template.controlButtons != null,
+    'Aframe/ControlButtons'
   );
 
   return (
@@ -75,18 +83,16 @@ function Scene({ template }) {
             />
           }
         </a-assets>
-        {Camera && <Camera enableWASD={template.camera.enableWASD} enableLook={template.camera.enableLook} />}
+        {Camera && <Camera config={template.camera} />}
         {Lighting && <Lighting />}
         {template.objects?.map((object) => (
           <ModelContainer
             key={object.modelId}
-            position={object.position || "0 0 0"}
-            rotation={object.rotation || "0 0 0"}
-            scale={object.scale || "1 1 1"}
-            modelId={`#${object.modelId}`}
+            config={object}
           />
         ))}
-        {/* <Plane /> */}
+        {ControlButtons && <ControlButtons config={template.controlButtons} />}
+        <Plane />
         {SkyImage && <SkyImage />}
       </a-scene>
     </>

@@ -1,11 +1,13 @@
 'use client';
 import { useEffect, useState } from 'react';
 
-function ControlButtons({
-  effectAll = true,
-  selectionMode = null,
-  gazeTimeout = 1500,
-}) {
+function ControlButtons({ config = {} }) {
+  const {
+    effectAll = true,
+    selectionMode = null,
+    gazeTimeout = 1500,
+  } = config; // Destructure the config object
+
   const [visible, setVisible] = useState(false);
   const [selectedModelId, setSelectedModelId] = useState(null);
   const [registeredModels, setRegisteredModels] = useState(new Set());

@@ -1,21 +1,37 @@
 {
-  "background": {
-    "type": "devicecamera",
-    "facingMode": "environment",
+  "background" : {
+    "type" : "devicecamera",
+    "facingMode" : "environment",
     "useSlam" : true
   },
   "camera" : {
-    "enableWASD": false,
-    "enableLook": false
+    "enableWASD" : false,
+    "enableLook" : false
   },
   "lighting" : {
   },
-  "objects": [
+  "objects" : [
     {
-      "position": "0 -0.25 0",
-      "rotation": "0 0 0",
-      "scale": "1 1 1",
-      "modelId": "voyager",
+      "format" : "gltf",
+      "rotateY" : true,
+      "rotateZ" : true,
+      "position" : "0 0.5 -1",
+      "rotation" : "0 0 0",
+      "modelPosition" : "0 -0.25 0",
+      "frustumCulled" : true,
+      "animationEnabled" : false,
+      "animationClip" : "*",
+      "useRegExp" : false,
+      "duration" : 0,
+      "crossFadeDuration" : 0,
+      "loop" : "repeat",
+      "timeScale" : 1,
+      "clampWhenFinished" : false,
+      "startAt" : 0,
+      "modelId" : "prism",
+      "assetId" : "prism",
+      "mtlAssetId" : "material",
+      "selectable" : true,
       "modelUrl": "3D-Model-AR/your-model.glb"
     }
   ]
