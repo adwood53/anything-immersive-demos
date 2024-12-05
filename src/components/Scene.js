@@ -86,13 +86,10 @@ function Scene({ template }) {
         {Camera && <Camera config={template.camera} />}
         {Lighting && <Lighting />}
         {template.objects?.map((object) => (
-          <ModelContainer
-            key={object.modelId}
-            config={object}
-          />
+          <ModelContainer key={object.modelId} config={object} />
         ))}
         {ControlButtons && <ControlButtons config={template.controlButtons} />}
-        <Plane />
+        {Plane && <Plane />}
         {SkyImage && <SkyImage />}
       </a-scene>
     </>
