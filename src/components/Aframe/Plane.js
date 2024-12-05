@@ -8,8 +8,8 @@ function Plane() {
       shadow="cast:false;"
       rotation="-90 0 0"
       position="0 -0.5 -1"
-      width="2"
-      height="2"
+      width="10"
+      height="10"
     ></a-plane>
   );
 }
