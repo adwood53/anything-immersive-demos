@@ -28,8 +28,8 @@
     },
     {
       "format" : "gltf",
-      "rotateY" : true,
-      "rotateZ" : true,
+      "rotateY" : false,
+      "rotateZ" : false,
       "position" : "-1 0 -2",
       "scale" : "1 1 1",
       "modelPosition" : "0 0 0",

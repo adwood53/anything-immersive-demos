@@ -35,8 +35,8 @@ class AlvaARConnectorTHREE
             ( rotationQuaternion !== null ) && rotationQuaternion.set( -r.x, r.y, r.z, r.w );
             ( translationVector !== null ) && translationVector.set( t.x, -t.y, -t.z );
             
-            document.getElementById("camera").setAttribute('position', {x: t.x, y: -t.y, z: -t.z});
-            document.getElementById("camera").setAttribute('rotation', {x: -r.x, y: r.y, z: r.z, w: r.w});
+            // document.getElementById("camera").setAttribute('position', {x: t.x, y: -t.y, z: -t.z});
+            // document.getElementById("camera").setAttribute('rotation', {x: -r.x, y: r.y, z: r.z, w: r.w});
         }
     }
 }

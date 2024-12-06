@@ -1,10 +1,11 @@
 {
   "background" : {
-    "type" : "devicecamera",
-    "facingMode" : "environment",
+    "type" : "video",
+    "url" : "SLAM-Video-Test/video.mp4",
     "useSlam" : true
   },
   "camera" : {
+    "position" : "0 0 0",
     "enableWASD" : false,
     "enableLook" : false
   },
@@ -17,8 +18,9 @@
       "rotateZ" : false,
       "modelId" : "model2",
       "assetId" : "model2",
-      "position" : "0 0 -1",
+      "position" : "0 0 -10",
       "modelPosition" : "0 -0.25 0",
+      "scale" : "1 1 1",
       "modelUrl": "3D-Model-AR/your-model.glb"
     }
   ],

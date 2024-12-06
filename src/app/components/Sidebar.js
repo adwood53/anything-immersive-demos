@@ -62,8 +62,8 @@ const Sidebar = () => {
               </button>
             </li>
             <li>
-              <button onClick={() => handleNavClick('SLAM-Test')}>
-                SLAM Test
+              <button onClick={() => handleNavClick('SLAM-Video-Test')}>
+                SLAM Video Test
               </button>
             </li>
           </ul>

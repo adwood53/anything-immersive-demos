@@ -15,7 +15,7 @@ function Layout({ children }) {
         />
       </Head>
       <Script
-        src="https://aframe.io/releases/1.4.0/aframe.min.js"
+        src="https://aframe.io/releases/1.6.0/aframe.min.js"
         strategy="beforeInteractive"
       />
       <main>{children}</main>

@@ -1,21 +1,22 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 function Camera({config = {}}) {
   const {
-    position = '0 0.4 0',
+    position = '0 0 0',
     enableWASD = false,
     enableLook = true,
     raycastType = null, // 'gaze', 'click', or 'gazeclick'
   } = config; // Destructure the config object
 
+  const cameraRef = useRef(null);
+
   useEffect(() => {
-    if (!window.AFRAME) return;
+    const camera = cameraRef.current;
 
     // Raycasting setup
     const setupRaycasting = () => {
-      const cameraEntity = document.querySelector('a-camera');
-      if (!cameraEntity) {
+      if (!camera) {
         console.warn('Camera entity not found, retrying...');
         setTimeout(setupRaycasting, 100); // Retry after a short delay
         return;
@@ -24,7 +25,7 @@ function Camera({config = {}}) {
       console.log('Camera entity found, setting up raycasting.');
 
       const existingRaycaster =
-        cameraEntity.querySelector('[raycaster]');
+      camera.querySelector('[raycaster]');
       if (existingRaycaster) {
         existingRaycaster.parentNode.removeChild(existingRaycaster);
         console.log('Removed existing raycaster.');
@@ -64,7 +65,7 @@ function Camera({config = {}}) {
         });
       }
 
-      cameraEntity.appendChild(raycasterEntity);
+      camera.appendChild(raycasterEntity);
       console.log('Raycaster entity appended.');
     };
 
@@ -83,6 +84,8 @@ function Camera({config = {}}) {
 
   return (
     <a-camera
+      camera={"active: true; fov: 75; near: 0.01; far: 1000;"}
+      ref={cameraRef}
       position={position}
       wasd-controls={`enabled: ${enableWASD}`}
       look-controls={`enabled: ${enableLook}`}

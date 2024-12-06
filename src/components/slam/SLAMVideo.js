@@ -3,33 +3,23 @@
 import { useEffect, useRef } from 'react';
 import styles from '../DeviceCamera.module.css';
 
-const CameraView = () => {
+const CameraView = ({videoSrc}) => {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
+  const videoRef = useRef(null);
 
   useEffect(() => {
     const initializeSLAM = async () => {
-      const config = {
-        video: {
-          facingMode: 'environment',
-          aspectRatio: 16 / 9,
-          width: { ideal: 1280 },
-        },
-        audio: false,
-      };
-
       const $container = containerRef.current;
       const $canvas = canvasRef.current;
+      const $video = videoRef.current;
 
       const ctx = $canvas.getContext('2d', { alpha: false, desynchronized: true });
 
-      const [{ AlvaAR }, { Camera, resize2cover, onFrame }] = await Promise.all([
+      const [{ AlvaAR }, { resize2cover, onFrame }] = await Promise.all([
         import('@/slam/assets/alva_ar.js'),
         import('@/slam/assets/utils.js'),
       ]);
-
-      const media = await Camera.Initialize(config);
-      const $video = media.el;
 
       const size = resize2cover(
         $video.videoWidth,
@@ -77,7 +67,7 @@ const CameraView = () => {
 
             const camera = document.querySelector("a-camera");
             camera.setAttribute('position', `${t.x} ${-t.y} ${-t.z}`);
-            camera.setAttribute('rotation', `${-r.x} ${r.y} ${r.z}`);
+            camera.setAttribute('rotation', `${-r.x} ${r.y} ${r.z} ${r.w}`);
           }
           else {
             // console.log("lost pose");
@@ -92,17 +82,32 @@ const CameraView = () => {
         }
 
         return true;
-      }, 30);
+      }, 1000);
     };
 
     initializeSLAM().catch((error) => {
       console.error('Error initializing SLAM:', error);
     });
-  }, []);
+  }, [videoSrc]);
 
   return (
       <div className={`${styles.container}`} ref={containerRef}>
-        <canvas ref={canvasRef} />
+        <video
+          ref={videoRef}
+          src={videoSrc}
+          loop={true}
+          autoPlay
+          muted
+          playsInline
+          style={{width: "0", height: "0"}}
+          // style={{ display: 'none' }}
+        />
+        <canvas ref={canvasRef} style={{
+          background: "red",
+          objectFit: "fill",
+          position:"absolute",
+          }}
+        />
       </div>
   );
 };

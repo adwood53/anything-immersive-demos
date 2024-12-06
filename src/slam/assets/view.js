@@ -136,8 +136,7 @@ class ARCamIMUView
 
             object.scale.set( scale, scale, scale );
             object.position.set( point.x, point.y, point.z );
-            object.custom = true;
-
+            object.custom = true;   
             this.scene.add( object );
         }
     }

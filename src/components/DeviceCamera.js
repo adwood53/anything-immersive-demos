@@ -75,11 +75,9 @@ const DeviceCamera = ({ facingMode }) => {
   }, [facingMode]);
 
   return (
-    <div>
-        <div className={`${styles.container}`} ref={containerRef}>
-            <canvas id='device-camera-view' ref={canvasRef} />
-        </div>
-    </div>
+    <div className={`${styles.container}`} ref={containerRef}>
+      <canvas id='device-camera-view' ref={canvasRef} />
+</div>
   );
 };
 

@@ -17,7 +17,7 @@ function Content() {
     '3d-Model-VR': `${process.env.NEXT_PUBLIC_BASE_PATH}/3D-Model-VR`,
     'swipeable-2d-content': 'https://example.com/swipeable-2d-content',
     'weblinks': 'https://example.com/weblinks',
-    'SLAM-Test': `${process.env.NEXT_PUBLIC_BASE_PATH}/SLAM-Test`
+    'SLAM-Video-Test': `${process.env.NEXT_PUBLIC_BASE_PATH}/SLAM-Video-Test`,
   };
 
   const iframeUrl = iframeSrc && urlMap[iframeSrc];

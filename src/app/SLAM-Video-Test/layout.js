@@ -7,7 +7,7 @@ function Layout({ children }) {
   return (
     <>
       <Head>
-        <title>SLAM Test</title>
+        <title>3D AR Model Viewer</title>
         <meta charSet="utf-8" />
         <meta
           name="viewport"
@@ -15,7 +15,7 @@ function Layout({ children }) {
         />
       </Head>
       <Script
-        src="https://aframe.io/releases/1.4.0/aframe.min.js"
+        src="https://aframe.io/releases/1.6.0/aframe.min.js"
         strategy="beforeInteractive"
       />
       <main>{children}</main>
