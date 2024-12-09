@@ -13,11 +13,12 @@ function Content() {
 
   // Map of keys to URLs
   const urlMap = {
-    '3d-model-ar': `${process.env.NEXT_PUBLIC_BASE_PATH}/3d-model-ar`,
-    '3d-model-vr': `${process.env.NEXT_PUBLIC_BASE_PATH}/3d-model-vr`,
-    'swipeable-2d-content': 'https://example.com/swipeable-2d-content',
-    'weblinks': 'https://example.com/weblinks',
-    'slam-video-test': `${process.env.NEXT_PUBLIC_BASE_PATH}/slam-video-test`,
+    '3D-Model-AR': `${process.env.NEXT_PUBLIC_BASE_PATH}/3D-Model-AR`,
+    '3D-Model-VR': `${process.env.NEXT_PUBLIC_BASE_PATH}/3D-Model-VR`,
+    'swipeable-2d-content':
+      'https://example.com/swipeable-2d-content',
+    weblinks: 'https://example.com/weblinks',
+    'SLAM-Video-Test': `${process.env.NEXT_PUBLIC_BASE_PATH}/SLAM-Video-Test`,
   };
 
   const iframeUrl = iframeSrc && urlMap[iframeSrc];

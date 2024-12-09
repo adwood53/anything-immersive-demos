@@ -5,17 +5,21 @@ import { useEffect, useState } from 'react';
 
 function Home() {
   const [template, setTemplate] = useState(null);
-  
+
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
   useEffect(() => {
-    fetch(`${basePath}/slam-video-test/template.json`)
+    fetch(`${basePath}/SLAM-Video-Test/template.json`)
       .then((response) => response.json())
       .then(setTemplate)
-      .catch((error) => console.error('Error loading template.json:', error));
+      .catch((error) =>
+        console.error('Error loading template.json:', error)
+      );
   }, [basePath]);
-  
-  const Scene = dynamic(() => import('@/components/Scene'), { ssr: false, });
+
+  const Scene = dynamic(() => import('@/components/Scene'), {
+    ssr: false,
+  });
 
   return (
     <div>
