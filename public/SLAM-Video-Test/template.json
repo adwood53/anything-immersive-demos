@@ -1,11 +1,10 @@
 {
   "background" : {
     "type" : "video",
-    "url" : "SLAM-Video-Test/video.mp4",
+    "url" : "slam-video-test/video2.mp4",
     "useSlam" : true
   },
   "camera" : {
-    "position" : "0 0 0",
     "enableWASD" : false,
     "enableLook" : false
   },
@@ -21,7 +20,7 @@
       "position" : "0 0 -10",
       "modelPosition" : "0 -0.25 0",
       "scale" : "1 1 1",
-      "modelUrl": "3D-Model-AR/your-model.glb"
+      "modelUrl": "3d-model-ar/your-model.glb"
     }
   ],
   "shadow" : {}

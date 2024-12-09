@@ -1,7 +1,7 @@
 {
   "background": {
     "type": "360image",
-    "url": "3D-Model-VR/puydesancy.jpg"
+    "url": "3d-model-vr/puydesancy.jpg"
   },
   "camera" : {
     "enableWASD": false,
@@ -24,12 +24,12 @@
       "selectable" : true,
       "interactive" : true,
       "highlightColor" : "00ff00",
-      "modelUrl": "3D-Model-AR/your-model.glb"
+      "modelUrl": "3d-model-ar/your-model.glb"
     },
     {
       "format" : "gltf",
-      "rotateY" : true,
-      "rotateZ" : true,
+      "rotateY" : false,
+      "rotateZ" : false,
       "position" : "-1 0 -2",
       "scale" : "1 1 1",
       "modelPosition" : "0 0 0",
@@ -42,7 +42,7 @@
       "selectable" : true,
       "interactive" : true,
       "highlightColor" : "00ff00",
-      "modelUrl": "3D-Model-VR/idle-automaton.glb"
+      "modelUrl": "3d-model-vr/idle-automaton.glb"
     }
   ],
   "shadow" : {

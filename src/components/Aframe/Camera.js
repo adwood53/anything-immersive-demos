@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 function Camera({config = {}}) {
   const {
     position = '0 0 0',
+    rotation = '0 0 0',
     enableWASD = false,
     enableLook = true,
     raycastType = null, // 'gaze', 'click', or 'gazeclick'
@@ -13,6 +14,8 @@ function Camera({config = {}}) {
 
   useEffect(() => {
     const camera = cameraRef.current;
+
+    // camera.object3D.rotation.reorder('YXZ');
 
     // Raycasting setup
     const setupRaycasting = () => {
@@ -87,6 +90,7 @@ function Camera({config = {}}) {
       camera={"active: true; fov: 75; near: 0.01; far: 1000;"}
       ref={cameraRef}
       position={position}
+      rotation={rotation}
       wasd-controls={`enabled: ${enableWASD}`}
       look-controls={`enabled: ${enableLook}`}
     >

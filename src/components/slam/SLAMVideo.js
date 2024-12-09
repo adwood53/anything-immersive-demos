@@ -62,15 +62,16 @@ const CameraView = ({videoSrc}) => {
             // console.log("have pose");
 
             const m = new THREE.Matrix4().fromArray(pose);
-            const r = new THREE.Quaternion().setFromRotationMatrix(m);
+            const q = new THREE.Quaternion().setFromRotationMatrix(m);
             const t = new THREE.Vector3(pose[12], pose[13], pose[14]);
 
             const camera = document.querySelector("a-camera");
             camera.setAttribute('position', `${t.x} ${-t.y} ${-t.z}`);
-            camera.setAttribute('rotation', `${-r.x} ${r.y} ${r.z} ${r.w}`);
+            let r = new THREE.Euler().setFromQuaternion(q);
+            camera.setAttribute('rotation', `${-r.x * 50} ${r.y * 50} ${r.z * 50}`);
           }
           else {
-            // console.log("lost pose");
+            console.log("lost pose");
 
             const dots = alva.getFramePoints();
 
@@ -82,7 +83,7 @@ const CameraView = ({videoSrc}) => {
         }
 
         return true;
-      }, 1000);
+      }, 60);
     };
 
     initializeSLAM().catch((error) => {
@@ -99,13 +100,10 @@ const CameraView = ({videoSrc}) => {
           autoPlay
           muted
           playsInline
-          style={{width: "0", height: "0"}}
+          // style={{width: "0", height: "0"}}
           // style={{ display: 'none' }}
         />
         <canvas ref={canvasRef} style={{
-          background: "red",
-          objectFit: "fill",
-          position:"absolute",
           }}
         />
       </div>

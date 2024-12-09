@@ -9,7 +9,7 @@ function Home() {
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
   useEffect(() => {
-    fetch(`${basePath}/3D-Model-VR/template.json`)
+    fetch(`${basePath}/3d-model-vr/template.json`)
       .then((response) => response.json())
       .then(setTemplate)
       .catch((error) => console.error('Error loading template.json:', error));

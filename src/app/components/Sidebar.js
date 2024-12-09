@@ -40,12 +40,12 @@ const Sidebar = () => {
           <h1>NFC Demos</h1>
           <ul className={styles.nav}>
             <li>
-              <button onClick={() => handleNavClick('3d-Model-AR')}>
+              <button onClick={() => handleNavClick('3d-model-ar')}>
                 3D Model (AR)
               </button>
             </li>
             <li>
-              <button onClick={() => handleNavClick('3d-Model-VR')}>
+              <button onClick={() => handleNavClick('3d-model-vr')}>
                 360° 3D Model (VR)
               </button>
             </li>
@@ -62,7 +62,7 @@ const Sidebar = () => {
               </button>
             </li>
             <li>
-              <button onClick={() => handleNavClick('SLAM-Video-Test')}>
+              <button onClick={() => handleNavClick('slam-video-test')}>
                 SLAM Video Test
               </button>
             </li>

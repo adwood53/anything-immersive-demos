@@ -42,9 +42,9 @@ function Scene({ template }) {
       // if (template.background.type === 'video') {
       //   componentImports.VideoPlayer = (await import('@/components/VideoPlayer')).default;
       // }
-      if (template.background.type === 'video' && template.background.useSlam) {
-        componentImports.SLAMVideo = (await import('@/components/slam/SLAMVideo')).default;
-      }
+      // if (template.background.type === 'video' && template.background.useSlam) {
+      //   componentImports.SLAMVideo = (await import('@/components/slam/SLAMVideo')).default;
+      // }
 
       setComponents(componentImports);
       setIsComponentsReady(true);
@@ -58,8 +58,8 @@ function Scene({ template }) {
   }
 
   const {
-    // DeviceCamera,
-    // SLAM,
+    DeviceCamera,
+    SLAM,
     SLAMCamera,
     Camera,
     Lighting,
@@ -73,11 +73,11 @@ function Scene({ template }) {
 
   return (
     <>
-      {/* {DeviceCamera && <DeviceCamera facingMode={template.background.facingMode} />}
-      {SLAM && <SLAM />} */}
+      {/* {DeviceCamera && <DeviceCamera facingMode={template.background.facingMode} />} */}
+      {/* {SLAM && <SLAM />} */}
       {/* <VideoPlayer videoSrc={`${basePath}/3D-Model-AR/video.mp4`} loop={true} /> */}
       {SLAMCamera && <SLAMCamera />}
-      {SLAMVideo && <SLAMVideo videoSrc={`${basePath}/${template.background.url}`} />}
+      {/* {SLAMVideo && <SLAMVideo videoSrc={`${basePath}/${template.background.url}`} />} */}
       <a-scene
         renderer="colorManagement: true; physicallyCorrectLights: true; exposure: 1; toneMapping: ACESFilmic; antialias: true;"
         shadow="type: pcfsoft"
