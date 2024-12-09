@@ -14,7 +14,10 @@ const DeviceCamera = ({ facingMode }) => {
 
       if (!$container || !$canvas) return;
 
-      const ctx = $canvas.getContext('2d', { alpha: false, desynchronized: true });
+      const ctx = $canvas.getContext('2d', {
+        alpha: false,
+        desynchronized: true,
+      });
 
       const [{ Camera, onFrame, resize2cover }] = await Promise.all([
         import('@/slam/assets/utils.js'),
@@ -47,7 +50,7 @@ const DeviceCamera = ({ facingMode }) => {
       $video.setAttribute('autoplay', true);
       $video.setAttribute('playsinline', true);
       $video.setAttribute('webkit-playsinline', true);
-      
+
       onFrame(() => {
         // ctx.clearRect(0, 0, $canvas.width, $canvas.height);
 
@@ -76,8 +79,8 @@ const DeviceCamera = ({ facingMode }) => {
 
   return (
     <div className={`${styles.container}`} ref={containerRef}>
-      <canvas id='device-camera-view' ref={canvasRef} />
-</div>
+      <canvas id="device-camera-view" ref={canvasRef} />
+    </div>
   );
 };
 

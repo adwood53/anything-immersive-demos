@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import styles from '../DeviceCamera.module.css';
+import styles from './DeviceCamera.module.css';
 
 const CameraView = () => {
   const containerRef = useRef(null);
@@ -21,12 +21,16 @@ const CameraView = () => {
       const $container = containerRef.current;
       const $canvas = canvasRef.current;
 
-      const ctx = $canvas.getContext('2d', { alpha: false, desynchronized: true });
+      const ctx = $canvas.getContext('2d', {
+        alpha: false,
+        desynchronized: true,
+      });
 
-      const [{ AlvaAR }, { Camera, resize2cover, onFrame }] = await Promise.all([
-        import('@/slam/assets/alva_ar.js'),
-        import('@/slam/assets/utils.js'),
-      ]);
+      const [{ AlvaAR }, { Camera, resize2cover, onFrame }] =
+        await Promise.all([
+          import('@/slam/assets/alva_ar.js'),
+          import('@/slam/assets/utils.js'),
+        ]);
 
       const media = await Camera.Initialize(config);
       const $video = media.el;
@@ -44,11 +48,18 @@ const CameraView = () => {
       $video.style.width = `${size.width}px`;
       $video.style.height = `${size.height}px`;
 
-      const alva = await AlvaAR.Initialize($canvas.width, $canvas.height);
+      const alva = await AlvaAR.Initialize(
+        $canvas.width,
+        $canvas.height
+      );
 
       $container.appendChild($canvas);
 
-      document.body.addEventListener('click', () => alva.reset(), false);
+      document.body.addEventListener(
+        'click',
+        () => alva.reset(),
+        false
+      );
 
       onFrame(() => {
         ctx.clearRect(0, 0, $canvas.width, $canvas.height);
@@ -65,7 +76,12 @@ const CameraView = () => {
             size.width,
             size.height
           );
-          const frame = ctx.getImageData(0, 0, $canvas.width, $canvas.height);
+          const frame = ctx.getImageData(
+            0,
+            0,
+            $canvas.width,
+            $canvas.height
+          );
           const pose = alva.findCameraPose(frame);
 
           if (pose) {
@@ -75,11 +91,10 @@ const CameraView = () => {
             const r = new THREE.Quaternion().setFromRotationMatrix(m);
             const t = new THREE.Vector3(pose[12], pose[13], pose[14]);
 
-            const camera = document.querySelector("a-camera");
+            const camera = document.querySelector('a-camera');
             camera.setAttribute('position', `${t.x} ${-t.y} ${-t.z}`);
             camera.setAttribute('rotation', `${-r.x} ${r.y} ${r.z}`);
-          }
-          else {
+          } else {
             // console.log("lost pose");
 
             const dots = alva.getFramePoints();
@@ -101,9 +116,9 @@ const CameraView = () => {
   }, []);
 
   return (
-      <div className={`${styles.container}`} ref={containerRef}>
-        <canvas ref={canvasRef} />
-      </div>
+    <div className={`${styles.container}`} ref={containerRef}>
+      <canvas ref={canvasRef} />
+    </div>
   );
 };
 
