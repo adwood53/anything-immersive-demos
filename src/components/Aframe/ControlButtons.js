@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import "@/aframe/components/gaze-cursor";
+import '@/aframe/components/gaze-cursor';
 
 function ControlButtons({ config = {} }) {
   const {
@@ -103,8 +103,14 @@ function ControlButtons({ config = {} }) {
     };
 
     scene.addEventListener('model-registered', handleModelRegistered);
-    scene.addEventListener('model-unregistered', handleModelUnregistered);
-    scene.addEventListener('model-selection-changed', handleModelSelected);
+    scene.addEventListener(
+      'model-unregistered',
+      handleModelUnregistered
+    );
+    scene.addEventListener(
+      'model-selection-changed',
+      handleModelSelected
+    );
 
     return () => {
       window.removeEventListener('load', setupGazeSystem);
@@ -123,7 +129,14 @@ function ControlButtons({ config = {} }) {
         );
       }
     };
-  }, [config, setSelectedModelId]);
+  }, [
+    config,
+    setSelectedModelId,
+    effectAll,
+    gazeTimeout,
+    selectedModelId,
+    selectionMode,
+  ]);
 
   // Get models to control based on mode
   const getTargetModels = () => {

@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef } from 'react';
 
-function Camera({config = {}}) {
+function Camera({ config = {} }) {
   const {
     position = '0 0 0',
     rotation = '0 0 0',
@@ -27,8 +27,7 @@ function Camera({config = {}}) {
 
       console.log('Camera entity found, setting up raycasting.');
 
-      const existingRaycaster =
-      camera.querySelector('[raycaster]');
+      const existingRaycaster = camera.querySelector('[raycaster]');
       if (existingRaycaster) {
         existingRaycaster.parentNode.removeChild(existingRaycaster);
         console.log('Removed existing raycaster.');
@@ -83,18 +82,17 @@ function Camera({config = {}}) {
         console.log('Cleaned up raycaster.');
       }
     };
-  }, [config]);
+  }, [config, raycastType]);
 
   return (
     <a-camera
-      camera={"active: true; fov: 75; near: 0.01; far: 1000;"}
+      camera={'active: true; fov: 75; near: 0.01; far: 1000;'}
       ref={cameraRef}
       position={position}
       rotation={rotation}
       wasd-controls={`enabled: ${enableWASD}`}
       look-controls={`enabled: ${enableLook}`}
-    >
-    </a-camera>
+    ></a-camera>
   );
 }
 
