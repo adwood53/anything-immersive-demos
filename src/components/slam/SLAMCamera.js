@@ -88,12 +88,12 @@ const CameraView = () => {
             // console.log("have pose");
 
             const m = new THREE.Matrix4().fromArray(pose);
-            const r = new THREE.Quaternion().setFromRotationMatrix(m);
+            // const r = new THREE.Quaternion().setFromRotationMatrix(m);
             const t = new THREE.Vector3(pose[12], pose[13], pose[14]);
 
             const camera = document.querySelector('a-camera');
             camera.setAttribute('position', `${t.x} ${-t.y} ${-t.z}`);
-            camera.setAttribute('rotation', `${-r.x * 50} ${r.y * 50} ${r.z * 50}`);
+            // camera.setAttribute('rotation', `${-r.x} ${r.y} ${r.z}`);
           } else {
             // console.log("lost pose");
 
