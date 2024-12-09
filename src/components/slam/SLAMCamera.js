@@ -92,7 +92,7 @@ const CameraView = () => {
             const t = new THREE.Vector3(pose[12], pose[13], pose[14]);
 
             const camera = document.querySelector('a-camera');
-            // camera.setAttribute('position', `${t.x} ${-t.y} ${-t.z}`);
+            camera.setAttribute('position', `${t.x} ${-t.y} ${-t.z}`);
             // camera.setAttribute('rotation', `${-r.x} ${r.y} ${r.z}`);
           } else {
             // console.log("lost pose");
