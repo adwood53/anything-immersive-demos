@@ -74,8 +74,8 @@ function Scene({ template }) {
   return (
     <>
       {/* {DeviceCamera && <DeviceCamera facingMode={template.background.facingMode} />} */}
-      {/* {SLAM && <SLAM />} */}
       {/* <VideoPlayer videoSrc={`${basePath}/3D-Model-AR/video.mp4`} loop={true} /> */}
+      {/* {SLAM && <SLAM />} */}
       {SLAMCamera && <SLAMCamera />}
       {/* {SLAMVideo && <SLAMVideo videoSrc={`${basePath}/${template.background.url}`} />} */}
       <a-scene

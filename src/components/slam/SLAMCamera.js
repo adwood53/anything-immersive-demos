@@ -7,6 +7,9 @@ const CameraView = () => {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
 
+  const previousPosition = useRef({ x: 0, y: 0, z: 0 });
+  const isFirstPose = useRef(false);
+
   useEffect(() => {
     const initializeSLAM = async () => {
       const config = {
@@ -87,14 +90,38 @@ const CameraView = () => {
           if (pose) {
             // console.log("have pose");
 
-            const m = new THREE.Matrix4().fromArray(pose);
+            // const m = new THREE.Matrix4().fromArray(pose);
             // const r = new THREE.Quaternion().setFromRotationMatrix(m);
             const t = new THREE.Vector3(pose[12], pose[13], pose[14]);
 
             const camera = document.querySelector('a-camera');
-            camera.setAttribute('position', `${t.x} ${-t.y} ${-t.z}`);
+            const currentPosition = camera.getAttribute('position');
+            if (isFirstPose.current) {
+              currentPosition.current = 0;
+              previousPosition.current = 0;
+              camera.setAttribute('position', "0 0 0");
+            }
+            else {
+              const delta = {
+                x: t.x - previousPosition.current.x,
+                y: t.y - previousPosition.current.y,
+                z: t.z - previousPosition.current.z,
+              };
+              camera.setAttribute('position', {
+                x: currentPosition.x + delta.x,
+                y: currentPosition.y - delta.y, // Y-axis is usually flipped
+                z: currentPosition.z - delta.z, // Z-axis is inverted
+              });
+            }
+            previousPosition.current = { x: t.x, y: t.y, z: t.z };
+
+            //camera.setAttribute('position', `${t.x} ${-t.y} ${-t.z}`);
             // camera.setAttribute('rotation', `${-r.x} ${r.y} ${r.z}`);
-          } else {
+
+            isFirstPose.current = false;
+          }
+          else {
+            isFirstPose.current = true;
             // console.log("lost pose");
 
             const dots = alva.getFramePoints();
