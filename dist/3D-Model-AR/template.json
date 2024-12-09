@@ -19,7 +19,7 @@
       "assetId" : "model2",
       "position" : "0 0 -10",
       "modelPosition" : "0 -0.25 0",
-      "modelUrl": "3d-model-ar/your-model.glb"
+      "modelUrl": "3D-Model-AR/your-model.glb"
     }
   ],
   "shadow" : {}
