@@ -1,7 +1,7 @@
 {
   "background" : {
     "type" : "video",
-    "url" : "SLAM-Video-Test/video2.mp4",
+    "url" : "SLAM-Video-Test/video1.mp4",
     "useSlam" : true
   },
   "camera" : {
