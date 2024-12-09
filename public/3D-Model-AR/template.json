@@ -6,7 +6,7 @@
   },
   "camera" : {
     "enableWASD" : false,
-    "enableLook" : true
+    "enableLook" : false
   },
   "lighting" : {
   },
