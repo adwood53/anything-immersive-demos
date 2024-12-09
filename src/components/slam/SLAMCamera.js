@@ -93,7 +93,7 @@ const CameraView = () => {
 
             const camera = document.querySelector('a-camera');
             camera.setAttribute('position', `${t.x} ${-t.y} ${-t.z}`);
-            camera.setAttribute('rotation', `${-r.x} ${r.y} ${r.z}`);
+            camera.setAttribute('rotation', `${-r.x * 50} ${r.y * 50} ${r.z * 50}`);
           } else {
             // console.log("lost pose");
 
