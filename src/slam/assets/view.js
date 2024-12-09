@@ -1,5 +1,5 @@
-// import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
-// import { OrbitControls } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/controls/OrbitControls.js';
+import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/build/three.module.js';
+import { OrbitControls } from 'https://threejsfundamentals.org/threejs/resources/threejs/r132/examples/jsm/controls/OrbitControls.js';
 import { AlvaARConnectorTHREE } from './alva_ar_three.js'
 
 class ARCamView
@@ -136,7 +136,8 @@ class ARCamIMUView
 
             object.scale.set( scale, scale, scale );
             object.position.set( point.x, point.y, point.z );
-            object.custom = true;   
+            object.custom = true;
+
             this.scene.add( object );
         }
     }
