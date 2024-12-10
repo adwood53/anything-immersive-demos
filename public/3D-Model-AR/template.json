@@ -5,7 +5,7 @@
     "useSlam" : true
   },
   "camera" : {
-    "enableWASD" : true,
+    "enableWASD" : false,
     "enableLook" : false
   },
   "lighting" : {
