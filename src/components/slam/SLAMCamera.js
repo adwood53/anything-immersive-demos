@@ -130,7 +130,7 @@ const CameraView = () => {
         }
 
         return true;
-      }, 30);
+      }, 120);
     };
 
     if (!isSLAMInitialized.current)
