@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[416],{4416:(t,s,e)=>{e.r(s),e.d(s,{default:()=>a});var n=e(5155);let a=function(){return(0,n.jsxs)("a-entity",{children:[(0,n.jsx)("a-sky",{src:"#sky",rotation:"0 -130 0"}),(0,n.jsx)("a-text",{font:"kelsonsans",value:"Puy de Sancy, France",width:"6",position:"-2.5 0.25 -1.5",rotation:"0 15 0"})]})}}}]);
