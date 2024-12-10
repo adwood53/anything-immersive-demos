@@ -1,5 +1,4 @@
-if (!AFRAME.components['animation-mixer-control'])
-{
+if (!AFRAME.components['animation-mixer-control']) {
     AFRAME.registerComponent('animation-mixer-control', {
         schema: {
             enabled: { type: 'boolean', default: false },

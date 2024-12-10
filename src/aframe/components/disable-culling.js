@@ -1,5 +1,4 @@
-if (!AFRAME.components['disable-culling'])
-{
+if (!AFRAME.components['disable-culling']) {
   AFRAME.registerComponent('disable-culling', {
       init() {
         this.el.addEventListener('model-loaded', () => {

@@ -1,5 +1,4 @@
-if (!AFRAME.components['model-control'])
-{
+if (!AFRAME.components['model-control']) {
     AFRAME.registerComponent('model-control', {
         schema: {
             rotateY: { type: 'boolean', default: true },

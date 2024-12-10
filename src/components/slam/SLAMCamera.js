@@ -9,6 +9,7 @@ const CameraView = () => {
 
   const previousPosition = useRef({ x: 0, y: 0, z: 0 });
   const isFirstPose = useRef(false);
+  const startingRotation = useRef({x: 0, y: 0, z: 0})
 
   useEffect(() => {
     const initializeSLAM = async () => {
@@ -93,13 +94,21 @@ const CameraView = () => {
             // const m = new THREE.Matrix4().fromArray(pose);
             // const r = new THREE.Quaternion().setFromRotationMatrix(m);
             const t = new THREE.Vector3(pose[12], pose[13], pose[14]);
-
             const camera = document.querySelector('a-camera');
-            const currentPosition = camera.getAttribute('position');
             if (isFirstPose.current) {
-              currentPosition.current = 0;
               previousPosition.current = 0;
+              const currentRotation = camera.getAttribute('rotation');
+              startingRotation.current = {
+                x: currentRotation.x,
+                y: currentRotation.y,
+                z: currentRotation.z
+              }
               camera.setAttribute('position', "0 0 0");
+              camera.setAttribute('rotation-offset', `
+                pitch: ${-startingRotation.current.x}; 
+                yaw: ${-startingRotation.current.y}; 
+                roll: ${-startingRotation.current.z};
+              `);
             }
             else {
               const delta = {
@@ -107,6 +116,7 @@ const CameraView = () => {
                 y: t.y - previousPosition.current.y,
                 z: t.z - previousPosition.current.z,
               };
+              const currentPosition = camera.getAttribute('position');
               camera.setAttribute('position', {
                 x: currentPosition.x + delta.x,
                 y: currentPosition.y - delta.y, // Y-axis is usually flipped

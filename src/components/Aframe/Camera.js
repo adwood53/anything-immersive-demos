@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef } from 'react';
+import "@/aframe/components/rotation-offset";
 
 function Camera({ config = {} }) {
   const {
@@ -92,6 +93,7 @@ function Camera({ config = {} }) {
       rotation={rotation}
       wasd-controls={`enabled: ${enableWASD}`}
       look-controls={`enabled: ${enableLook}`}
+      rotation-offset
     ></a-camera>
   );
 }

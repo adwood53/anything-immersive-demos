@@ -1,5 +1,4 @@
-if (!AFRAME.components['gaze-cursor'])
-{
+if (!AFRAME.components['gaze-cursor']) {
     AFRAME.registerComponent('gaze-cursor', {
         schema: {
             timeout: { type: 'number', default: 1500 },
