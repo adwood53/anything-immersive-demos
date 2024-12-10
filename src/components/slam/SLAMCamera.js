@@ -9,7 +9,6 @@ const CameraView = () => {
 
   const previousPosition = useRef({ x: 0, y: 0, z: 0 });
   const isFirstPose = useRef(false);
-  const startingRotation = useRef({x: 0, y: 0, z: 0})
 
   useEffect(() => {
     const initializeSLAM = async () => {
@@ -97,17 +96,14 @@ const CameraView = () => {
             const camera = document.querySelector('a-camera');
             if (isFirstPose.current) {
               previousPosition.current = 0;
-              const currentRotation = camera.getAttribute('rotation');
-              startingRotation.current = {
-                x: currentRotation.x,
-                y: currentRotation.y,
-                z: currentRotation.z
-              }
               camera.setAttribute('position', "0 0 0");
+              
+              const currentRotation = camera.getAttribute('rotation');
+              const currentRotationOffset = camera.getAttribute('rotation-offset');
               camera.setAttribute('rotation-offset', `
-                pitch: ${-startingRotation.current.x}; 
-                yaw: ${-startingRotation.current.y}; 
-                roll: ${-startingRotation.current.z};
+                pitch: ${currentRotationOffset.x - currentRotation.x}; 
+                yaw: ${currentRotationOffset.y - currentRotation.y}; 
+                roll: ${currentRotationOffset.z - currentRotation.z};
               `);
             }
             else {
