@@ -86,15 +86,16 @@ function Camera({ config = {} }) {
   }, [config, raycastType]);
 
   return (
-    <a-camera
-      camera={'active: true; fov: 75; near: 0.01; far: 1000;'}
-      ref={cameraRef}
-      position={position}
-      rotation={rotation}
-      wasd-controls={`enabled: ${enableWASD}`}
-      look-controls={`enabled: ${enableLook}`}
-      rotation-offset
-    ></a-camera>
+    <a-entity position={position} look-controls={`enabled: ${enableLook}`}>
+      <a-camera
+        camera={'active: true; fov: 45; near: 0.01; far: 1000;'}
+        ref={cameraRef}
+        position="0 0 0"
+        rotation
+        wasd-controls={`enabled: ${enableWASD}`}
+        look-controls={`enabled: false`}
+      ></a-camera>
+    </a-entity>
   );
 }
 

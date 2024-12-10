@@ -76,17 +76,17 @@ function ModelContainer({ config = {} }) {
         {...(animationEnabled
           ? {
               'animation-mixer-control': `
-            enabled: ${animationEnabled}; 
-            clip: ${animationClip}; 
-            useRegExp: ${useRegExp}; 
-            duration: ${duration}; 
-            crossFadeDuration: ${crossFadeDuration}; 
-            loop: ${loop}; 
-            repetitions: ${repetitions}; 
-            timeScale: ${timeScale}; 
-            clampWhenFinished: ${clampWhenFinished}; 
-            startAt: ${startAt}
-          `,
+              enabled: ${animationEnabled}; 
+              clip: ${animationClip}; 
+              useRegExp: ${useRegExp}; 
+              duration: ${duration}; 
+              crossFadeDuration: ${crossFadeDuration}; 
+              loop: ${loop}; 
+              repetitions: ${repetitions}; 
+              timeScale: ${timeScale}; 
+              clampWhenFinished: ${clampWhenFinished}; 
+              startAt: ${startAt}
+              `,
             }
           : {})}
       ></a-entity>
