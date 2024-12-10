@@ -12,7 +12,7 @@ const CameraView = () => {
 
   useEffect(() => {
     const camera = document.querySelector('a-camera');
-    const looker = camera.parentNode;
+    // const looker = camera.parentNode;
 
     const initializeSLAM = async () => {
       const [{ AlvaAR }, { Camera, resize2cover, onFrame }] =
@@ -80,8 +80,14 @@ const CameraView = () => {
             const t = new THREE.Vector3(pose[12], pose[13], pose[14]);
             const m = new THREE.Matrix4().fromArray(pose);
             const r = new THREE.Quaternion().setFromRotationMatrix(m);
-            looker.setAttribute('position', `${t.x} ${-t.y} ${-t.z}`);
-            looker.setAttribute('rotation', `${-r.x} ${r.y} ${r.z}`);
+            const euler = new THREE.Euler().setFromQuaternion(r);
+            const eulerInDegrees = new THREE.Euler(
+              THREE.MathUtils.radToDeg(euler.x),
+              THREE.MathUtils.radToDeg(euler.y),
+              THREE.MathUtils.radToDeg(euler.z)
+            );
+            camera.setAttribute('position', `${t.x} ${-t.y} ${-t.z}`);
+            camera.setAttribute('rotation', `${-eulerInDegrees.x} ${eulerInDegrees.y} ${eulerInDegrees.z}`);
 
             // if (isFirstPose.current == true) {
             //   looker.setAttribute('position', "0 0 0");
