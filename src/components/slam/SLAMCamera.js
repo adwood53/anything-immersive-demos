@@ -78,37 +78,37 @@ const CameraView = () => {
           if (pose) {
             console.log("have");
             const t = new THREE.Vector3(pose[12], pose[13], pose[14]);
-            // const m = new THREE.Matrix4().fromArray(pose);
-            // const r = new THREE.Quaternion().setFromRotationMatrix(m);
-            //camera.setAttribute('position', `${t.x} ${-t.y} ${-t.z}`);
-            // camera.setAttribute('rotation', `${-r.x} ${r.y} ${r.z}`);
+            const m = new THREE.Matrix4().fromArray(pose);
+            const r = new THREE.Quaternion().setFromRotationMatrix(m);
+            camera.setAttribute('position', `${t.x} ${-t.y} ${-t.z}`);
+            camera.setAttribute('rotation', `${-r.x} ${r.y} ${r.z}`);
 
-            if (isFirstPose.current == true) {
-              looker.setAttribute('position', "0 0 0");
+            // if (isFirstPose.current == true) {
+            //   looker.setAttribute('position', "0 0 0");
               
-              const currentLookRotation = looker.getAttribute('rotation');
-              camera.setAttribute('rotation', {
-                x: -currentLookRotation.x,
-                y: -currentLookRotation.y,
-                z: -currentLookRotation.z
-              });
+            //   const currentLookRotation = looker.getAttribute('rotation');
+            //   camera.setAttribute('rotation', {
+            //     x: -currentLookRotation.x,
+            //     y: -currentLookRotation.y,
+            //     z: -currentLookRotation.z
+            //   });
 
-              isFirstPose.current = false;
-            }
-            else {
-              const positionDelta = {
-                x: t.x - previousPosition.current.x,
-                y: t.y - previousPosition.current.y,
-                z: t.z - previousPosition.current.z,
-              };
-              const currentPosition = looker.getAttribute('position');
-              looker.setAttribute('position', {
-                x: currentPosition.x + positionDelta.x,
-                y: currentPosition.y - positionDelta.y, // Y-axis is usually flipped
-                z: currentPosition.z - positionDelta.z, // Z-axis is inverted
-              });
-            }
-            previousPosition.current = { x: t.x, y: t.y, z: t.z };
+            //   isFirstPose.current = false;
+            // }
+            // else {
+            //   const positionDelta = {
+            //     x: t.x - previousPosition.current.x,
+            //     y: t.y - previousPosition.current.y,
+            //     z: t.z - previousPosition.current.z,
+            //   };
+            //   const currentPosition = looker.getAttribute('position');
+            //   looker.setAttribute('position', {
+            //     x: currentPosition.x + positionDelta.x,
+            //     y: currentPosition.y - positionDelta.y, // Y-axis is usually flipped
+            //     z: currentPosition.z - positionDelta.z, // Z-axis is inverted
+            //   });
+            // }
+            // previousPosition.current = { x: t.x, y: t.y, z: t.z };
           }
           // Lost Pose
           else {

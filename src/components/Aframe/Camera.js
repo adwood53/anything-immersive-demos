@@ -83,12 +83,12 @@ function Camera({ config = {} }) {
         console.log('Cleaned up raycaster.');
       }
     };
-  }, [config, raycastType]);
+  }, [config]);
 
   return (
     <a-entity position={position} look-controls={`enabled: ${enableLook}`}>
       <a-camera
-        camera={'active: true; fov: 45; near: 0.01; far: 1000;'}
+        camera={'active: true; fov: 75; near: 0.01; far: 1000;'}
         ref={cameraRef}
         position="0 0 0"
         rotation
