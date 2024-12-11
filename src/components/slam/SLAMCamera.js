@@ -88,7 +88,6 @@ const CameraView = () => {
             // );
             camera.setAttribute('position', `${t.x} ${-t.y} ${-t.z}`);
             // camera.setAttribute('rotation', `${-eulerInDegrees.x} ${eulerInDegrees.y} ${eulerInDegrees.z}`);
-            console.log(`${-r.x} ${r.y} ${r.z} ${r.w}`);
             camera.setAttribute('quaternion-rotation', `${-r.x} ${r.y} ${r.z} ${r.w}`);
 
             // if (isFirstPose.current == true) {
