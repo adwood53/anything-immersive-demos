@@ -77,45 +77,36 @@ const CameraView = () => {
           // Have Pose
           if (pose) {
             //console.log("have");
-            const t = new THREE.Vector3(pose[12], pose[13], pose[14]);
-            const m = new THREE.Matrix4().fromArray(pose);
-            const r = new THREE.Quaternion().setFromRotationMatrix(m);
-            // const euler = new THREE.Euler().setFromQuaternion(r);
-            // const eulerInDegrees = new THREE.Euler(
-            //   THREE.MathUtils.radToDeg(euler.x),
-            //   THREE.MathUtils.radToDeg(euler.y),
-            //   THREE.MathUtils.radToDeg(euler.z)
-            // );
-            camera.setAttribute('position', `${t.x} ${-t.y} ${-t.z}`);
-            // camera.setAttribute('rotation', `${-eulerInDegrees.x} ${eulerInDegrees.y} ${eulerInDegrees.z}`);
-            camera.setAttribute('quaternion-rotation', `${-r.x} ${r.y} ${r.z} ${r.w}`);
+            
+            // Smoothing factor: this defines how fast you want to smooth the transition
+            const smoothingFactor = 0.35; // Adjust this value to control the smoothing speed
 
-            // if (isFirstPose.current == true) {
-            //   looker.setAttribute('position', "0 0 0");
-              
-            //   const currentLookRotation = looker.getAttribute('rotation');
-            //   camera.setAttribute('rotation', {
-            //     x: -currentLookRotation.x,
-            //     y: -currentLookRotation.y,
-            //     z: -currentLookRotation.z
-            //   });
+            // Get current position and quaternion rotation
+            const currentPosition = camera.getAttribute('position');
+            const currentQuaternion = camera.getAttribute('quaternion-rotation');
 
-            //   isFirstPose.current = false;
-            // }
-            // else {
-            //   const positionDelta = {
-            //     x: t.x - previousPosition.current.x,
-            //     y: t.y - previousPosition.current.y,
-            //     z: t.z - previousPosition.current.z,
-            //   };
-            //   const currentPosition = looker.getAttribute('position');
-            //   looker.setAttribute('position', {
-            //     x: currentPosition.x + positionDelta.x,
-            //     y: currentPosition.y - positionDelta.y, // Y-axis is usually flipped
-            //     z: currentPosition.z - positionDelta.z, // Z-axis is inverted
-            //   });
-            // }
-            // previousPosition.current = { x: t.x, y: t.y, z: t.z };
+            // Target position and rotation from the pose array
+            const targetPosition = new THREE.Vector3(pose[12], pose[13], pose[14]);
+            const poseMatrix = new THREE.Matrix4().fromArray(pose);
+            const targetQuaternion = new THREE.Quaternion().setFromRotationMatrix(poseMatrix);
+
+            // Interpolate position smoothly using lerpVectors
+            const smoothedPosition = new THREE.Vector3().lerpVectors(
+              new THREE.Vector3(currentPosition.x, currentPosition.y, currentPosition.z),
+              targetPosition,
+              smoothingFactor
+            );
+
+            // Interpolate rotation smoothly using slerpQuaternions
+            const smoothedQuaternion = new THREE.Quaternion().slerpQuaternions(
+              new THREE.Quaternion(currentQuaternion.x, currentQuaternion.y, currentQuaternion.z, currentQuaternion.w), 
+              targetQuaternion, 
+              smoothingFactor
+            );
+
+            // Update the camera's position and rotation
+            camera.setAttribute('position', `${smoothedPosition.x} ${-smoothedPosition.y} ${-smoothedPosition.z}`);
+            camera.setAttribute('quaternion-rotation', `${-smoothedQuaternion.x} ${smoothedQuaternion.y} ${smoothedQuaternion.z} ${smoothedQuaternion.w}`);
           }
           // Lost Pose
           else {
@@ -131,7 +122,7 @@ const CameraView = () => {
         }
 
         return true;
-      }, 30);
+      }, 60);
     };
 
     if (!isSLAMInitialized.current)
