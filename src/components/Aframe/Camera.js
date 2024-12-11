@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef } from 'react';
+import "@/aframe/components/quaternion-rotation"
 
 function Camera({ config = {} }) {
   const {
@@ -99,7 +100,8 @@ function Camera({ config = {} }) {
       camera={'active: true; fov: 75; near: 0.01; far: 1000;'}
       ref={cameraRef}
       position={position}
-      rotation={rotation}
+      // rotation={rotation}
+      quaternion-rotation
       wasd-controls={`enabled: ${enableWASD}`}
       look-controls={`enabled: ${enableLook}`}
     ></a-camera>

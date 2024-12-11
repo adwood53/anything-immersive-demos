@@ -76,18 +76,20 @@ const CameraView = () => {
 
           // Have Pose
           if (pose) {
-            console.log("have");
+            //console.log("have");
             const t = new THREE.Vector3(pose[12], pose[13], pose[14]);
             const m = new THREE.Matrix4().fromArray(pose);
             const r = new THREE.Quaternion().setFromRotationMatrix(m);
-            const euler = new THREE.Euler().setFromQuaternion(r);
-            const eulerInDegrees = new THREE.Euler(
-              THREE.MathUtils.radToDeg(euler.x),
-              THREE.MathUtils.radToDeg(euler.y),
-              THREE.MathUtils.radToDeg(euler.z)
-            );
+            // const euler = new THREE.Euler().setFromQuaternion(r);
+            // const eulerInDegrees = new THREE.Euler(
+            //   THREE.MathUtils.radToDeg(euler.x),
+            //   THREE.MathUtils.radToDeg(euler.y),
+            //   THREE.MathUtils.radToDeg(euler.z)
+            // );
             camera.setAttribute('position', `${t.x} ${-t.y} ${-t.z}`);
-            camera.setAttribute('rotation', `${-eulerInDegrees.x} ${eulerInDegrees.y} ${eulerInDegrees.z}`);
+            // camera.setAttribute('rotation', `${-eulerInDegrees.x} ${eulerInDegrees.y} ${eulerInDegrees.z}`);
+            console.log(`${-r.x} ${r.y} ${r.z} ${r.w}`);
+            camera.setAttribute('quaternion-rotation', `${-r.x} ${r.y} ${r.z} ${r.w}`);
 
             // if (isFirstPose.current == true) {
             //   looker.setAttribute('position', "0 0 0");
@@ -118,7 +120,7 @@ const CameraView = () => {
           }
           // Lost Pose
           else {
-            console.log("lost");
+            // console.log("lost");
             isFirstPose.current = true;
 
             const dots = alva.getFramePoints();
@@ -130,7 +132,7 @@ const CameraView = () => {
         }
 
         return true;
-      }, 120);
+      }, 30);
     };
 
     if (!isSLAMInitialized.current)
