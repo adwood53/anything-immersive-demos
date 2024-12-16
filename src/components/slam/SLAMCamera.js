@@ -7,8 +7,7 @@ const CameraView = () => {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
   const isSLAMInitialized = useRef(false);
-  const isFirstPose = useRef(true);
-  const previousPosition = useRef({ x: 0, y: 0, z: 0 });
+  const isFirstFrameLostPose = useRef(true);
 
   useEffect(() => {
     const camera = document.querySelector('a-camera');
@@ -76,46 +75,61 @@ const CameraView = () => {
 
           // Have Pose
           if (pose) {
-            camera.setAttribute("look-controls", "enabled: false");
-
+            if (isFirstFrameLostPose.current == true) {
+              looker.setAttribute("look-controls", "enabled: false");
+              isFirstFrameLostPose.current = false;
+            }
             //console.log("have");
             
             // Smoothing factor: this defines how fast you want to smooth the transition
-            const smoothingFactor = 0.35; // Adjust this value to control the smoothing speed
+            const smoothingFactor = 0.75; // Adjust this value to control the smoothing speed
 
             // Get current position and quaternion rotation
-            const currentPosition = camera.getAttribute('position');
-            const currentQuaternion = camera.getAttribute('quaternion-rotation');
+            const currentPositionComponent = looker.getAttribute('position');
+            const currentQuaternionComponent = camera.getAttribute('quaternion-rotation');
 
             // Target position and rotation from the pose array
             const targetPosition = new THREE.Vector3(pose[12], pose[13], pose[14]);
             const poseMatrix = new THREE.Matrix4().fromArray(pose);
-            const targetQuaternion = new THREE.Quaternion().setFromRotationMatrix(poseMatrix);
+            const targetQuaternion = new THREE.Quaternion().setFromRotationMatrix(poseMatrix)
 
             // Interpolate position smoothly using lerpVectors
-            const smoothedPosition = new THREE.Vector3().lerpVectors(
-              new THREE.Vector3(currentPosition.x, currentPosition.y, currentPosition.z),
-              targetPosition,
-              smoothingFactor
-            );
+            const currentPosition = new THREE.Vector3(currentPositionComponent.x, currentPositionComponent.y, currentPositionComponent.z);
+            const smoothedPosition = currentPosition.lerp(targetPosition, smoothingFactor);
 
             // Interpolate rotation smoothly using slerpQuaternions
-            const smoothedQuaternion = new THREE.Quaternion().slerpQuaternions(
-              new THREE.Quaternion(currentQuaternion.x, currentQuaternion.y, currentQuaternion.z, currentQuaternion.w), 
-              targetQuaternion, 
-              smoothingFactor
-            );
+            const currentRotation = new THREE.Quaternion(currentQuaternionComponent.x, currentQuaternionComponent.y, currentQuaternionComponent.z, currentQuaternionComponent.w).normalize();
+            const smoothedQuaternion = currentRotation.slerp(targetQuaternion.normalize(), smoothingFactor).normalize();
 
             // Update the camera's position and rotation
-            camera.setAttribute('position', `${smoothedPosition.x} ${-smoothedPosition.y} ${-smoothedPosition.z}`);
-            camera.setAttribute('quaternion-rotation', `${-smoothedQuaternion.x} ${smoothedQuaternion.y} ${smoothedQuaternion.z} ${smoothedQuaternion.w}`);
+            looker.setAttribute('position', {
+              x: smoothedPosition.x,
+              y: -smoothedPosition.y,
+              z: -smoothedPosition.z
+            });
+            camera.setAttribute('quaternion-rotation', {
+              x: -smoothedQuaternion.x,
+              y: smoothedQuaternion.y,
+              z: smoothedQuaternion.z,
+              w: smoothedQuaternion.w
+            });
           }
           // Lost Pose
           else {
             // console.log("lost");]
-            camera.setAttribute("look-controls", "enabled: true");
+            if (isFirstFrameLostPose) {
+              const currentQuaternionComponent = camera.getAttribute('quaternion-rotation');
+              looker.setAttribute('position', "0 0 0");
+              camera.setAttribute('quaternion-rotation', {
+                x: -currentQuaternionComponent.x,
+                y: -currentQuaternionComponent.y,
+                z: -currentQuaternionComponent.z,
+                w: currentQuaternionComponent.w
+              });
 
-            isFirstPose.current = true;
+              looker.setAttribute("look-controls", "enabled: true");
+              isFirstFrameLostPose.current = true;
+            }
 
             const dots = alva.getFramePoints();
             for (const p of dots) {
