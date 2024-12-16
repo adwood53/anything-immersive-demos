@@ -75,9 +75,9 @@ const CameraView = () => {
 
           // Have Pose
           if (pose) {
-            if (isFirstFrameLostPose.current == true) {
+            if (isFirstFrameLostPose.current == false) {
               looker.setAttribute("look-controls", "enabled: false");
-              isFirstFrameLostPose.current = false;
+              isFirstFrameLostPose.current = true;
             }
             //console.log("have");
             
@@ -117,7 +117,7 @@ const CameraView = () => {
           // Lost Pose
           else {
             // console.log("lost");]
-            if (isFirstFrameLostPose) {
+            if (isFirstFrameLostPose.current == true) {
               const currentQuaternionComponent = camera.getAttribute('quaternion-rotation');
               looker.setAttribute('position', "0 0 0");
               camera.setAttribute('quaternion-rotation', {
@@ -128,7 +128,7 @@ const CameraView = () => {
               });
 
               looker.setAttribute("look-controls", "enabled: true");
-              isFirstFrameLostPose.current = true;
+              isFirstFrameLostPose.current = false;
             }
 
             const dots = alva.getFramePoints();

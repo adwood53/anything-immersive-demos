@@ -96,6 +96,7 @@ function Camera({ config = {} }) {
         ref={cameraRef}
         position="0 0 0"
         rotation
+        quaternion-rotation
         wasd-controls={`enabled: false`}
         look-controls={`enabled: false`}
       ></a-camera>
