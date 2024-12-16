@@ -12,9 +12,13 @@ function Camera({ config = {} }) {
   } = config; // Destructure the config object
 
   const cameraRef = useRef(null);
-
+  const initCamPosition = useRef(false);
+  
   useEffect(() => {
     const camera = cameraRef.current;
+    if (initCamPosition) {
+      camera.setAttribute("position", "0 0 0");
+    }
 
     // camera.object3D.rotation.reorder('YXZ');
 
@@ -99,11 +103,12 @@ function Camera({ config = {} }) {
     <a-camera
       camera={'active: true; fov: 75; near: 0.01; far: 1000;'}
       ref={cameraRef}
-      position={position}
+      // position={position}
       // rotation={rotation}
       quaternion-rotation
       wasd-controls={`enabled: ${enableWASD}`}
-      look-controls={`enabled: ${enableLook}`}
+      // look-controls={`enabled: ${enableLook}`}
+      look-controls={`enabled: false`}
     ></a-camera>
   );
 }

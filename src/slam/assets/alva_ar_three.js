@@ -32,8 +32,8 @@ class AlvaARConnectorTHREE
             const r = new THREE.Quaternion().setFromRotationMatrix( m );
             const t = new THREE.Vector3( pose[12], pose[13], pose[14] );
 
-            ( rotationQuaternion !== null ) && rotationQuaternion.set( -r.x, r.y, r.z, r.w );
             ( translationVector !== null ) && translationVector.set( t.x, -t.y, -t.z );
+            ( rotationQuaternion !== null ) && rotationQuaternion.set( -r.x, r.y, r.z, r.w );
         }
     }
 }

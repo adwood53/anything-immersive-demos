@@ -12,7 +12,7 @@ const CameraView = () => {
 
   useEffect(() => {
     const camera = document.querySelector('a-camera');
-    // const looker = camera.parentNode;
+    const looker = camera.parentNode;
 
     const initializeSLAM = async () => {
       const [{ AlvaAR }, { Camera, resize2cover, onFrame }] =
@@ -76,6 +76,8 @@ const CameraView = () => {
 
           // Have Pose
           if (pose) {
+            camera.setAttribute("look-controls", "enabled: false");
+
             //console.log("have");
             
             // Smoothing factor: this defines how fast you want to smooth the transition
@@ -110,7 +112,9 @@ const CameraView = () => {
           }
           // Lost Pose
           else {
-            // console.log("lost");
+            // console.log("lost");]
+            camera.setAttribute("look-controls", "enabled: true");
+
             isFirstPose.current = true;
 
             const dots = alva.getFramePoints();
