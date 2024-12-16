@@ -72,11 +72,13 @@ const CameraView = () => {
 
           // Have Pose
           if (pose) {
-            if (isFirstFrameLostPose.current == false) {
-              camera.setAttribute("look-controls", "enabled: false");
-              camera.setAttribute("rotation", "0 0 0");
-              isFirstFrameLostPose.current = true;
-            }
+            // if (isFirstFrameLostPose.current == false) {
+            //   camera.setAttribute("look-controls", "enabled: false");
+            //   // camera.setAttribute("rotation", "0 0 0");
+            //   rotationRef.current = camera.getAttribute("quaternion-rotation");
+            //   console.log(rotationRef.current);
+            //   isFirstFrameLostPose.current = true;
+            // }
             //console.log("have");
             
             // Smoothing factor: this defines how fast you want to smooth the transition
@@ -111,12 +113,12 @@ const CameraView = () => {
           // Lost Pose
           else {
             // console.log("lost");]
-            if (isFirstFrameLostPose.current == true) {
-              rotationRef.current = { x: 0, y: 0, z: 0, w: 1 };
-              camera.setAttribute("look-controls", "enabled: true");
-              camera.setAttribute('quaternion-rotation', rotationRef.current);
-              isFirstFrameLostPose.current = false;
-            }
+            // if (isFirstFrameLostPose.current == true) {
+            //   // rotationRef.current = { x: 0, y: 0, z: 0, w: 1 };
+            //   // camera.setAttribute("look-controls", "enabled: true");
+            //   // camera.setAttribute('quaternion-rotation', rotationRef.current);
+            //   isFirstFrameLostPose.current = false;
+            // }
 
             const dots = alva.getFramePoints();
             for (const p of dots) {
