@@ -8,7 +8,9 @@ const CameraView = () => {
   const canvasRef = useRef(null);
   const isSLAMInitialized = useRef(false);
   const isFirstFrameLostPose = useRef(true);
-
+  const positionRef = useRef(new THREE.Vector3(0, 0, 0));
+  const rotationRef = useRef(new THREE.Quaternion(0, 0, 0, 1));
+  
   useEffect(() => {
     const camera = document.querySelector('a-camera');
     const looker = camera.parentNode;
@@ -82,11 +84,7 @@ const CameraView = () => {
             //console.log("have");
             
             // Smoothing factor: this defines how fast you want to smooth the transition
-            const smoothingFactor = 0.75; // Adjust this value to control the smoothing speed
-
-            // Get current position and quaternion rotation
-            const currentPositionComponent = looker.getAttribute('position');
-            const currentQuaternionComponent = camera.getAttribute('quaternion-rotation');
+            const smoothingFactor = 0.35; // Adjust this value to control the smoothing speed
 
             // Target position and rotation from the pose array
             const targetPosition = new THREE.Vector3(pose[12], pose[13], pose[14]);
@@ -94,37 +92,44 @@ const CameraView = () => {
             const targetQuaternion = new THREE.Quaternion().setFromRotationMatrix(poseMatrix)
 
             // Interpolate position smoothly using lerpVectors
-            const currentPosition = new THREE.Vector3(currentPositionComponent.x, currentPositionComponent.y, currentPositionComponent.z);
+            const currentPosition = new THREE.Vector3(positionRef.current.x, positionRef.current.y, positionRef.current.z);
             const smoothedPosition = currentPosition.lerp(targetPosition, smoothingFactor);
 
             // Interpolate rotation smoothly using slerpQuaternions
-            const currentRotation = new THREE.Quaternion(currentQuaternionComponent.x, currentQuaternionComponent.y, currentQuaternionComponent.z, currentQuaternionComponent.w).normalize();
+            const currentRotation = new THREE.Quaternion(rotationRef.current.x, rotationRef.current.y, rotationRef.current.z, rotationRef.current.w).normalize();
             const smoothedQuaternion = currentRotation.slerp(targetQuaternion.normalize(), smoothingFactor).normalize();
 
             // Update the camera's position and rotation
+            positionRef.current = smoothedPosition;
             looker.setAttribute('position', {
-              x: smoothedPosition.x,
-              y: -smoothedPosition.y,
-              z: -smoothedPosition.z
+              x: positionRef.current.x,
+              y: -positionRef.current.y,
+              z: -positionRef.current.z
             });
+            rotationRef.current = smoothedQuaternion;
             camera.setAttribute('quaternion-rotation', {
-              x: -smoothedQuaternion.x,
-              y: smoothedQuaternion.y,
-              z: smoothedQuaternion.z,
-              w: smoothedQuaternion.w
+              x: -rotationRef.current.x,
+              y: rotationRef.current.y,
+              z: rotationRef.current.z,
+              w: rotationRef.current.w
             });
           }
           // Lost Pose
           else {
             // console.log("lost");]
             if (isFirstFrameLostPose.current == true) {
-              const currentQuaternionComponent = camera.getAttribute('quaternion-rotation');
               looker.setAttribute('position', "0 0 0");
+              rotationRef.current = {
+                x: -rotationRef.current.x,
+                y: -rotationRef.current.y,
+                z: -rotationRef.current.z,
+                w: rotationRef.current.w
+              };
               camera.setAttribute('quaternion-rotation', {
-                x: -currentQuaternionComponent.x,
-                y: -currentQuaternionComponent.y,
-                z: -currentQuaternionComponent.z,
-                w: currentQuaternionComponent.w
+                x: -rotationRef.current.x,
+                y: rotationRef.current.y,
+                z: rotationRef.current.z,
+                w: rotationRef.current.w
               });
 
               looker.setAttribute("look-controls", "enabled: true");
