@@ -97,7 +97,7 @@ function Camera({ config = {} }) {
     //   ></a-camera>
     // </a-entity>
     <a-camera
-      camera={'active: true; fov: 45; near: 0.01; far: 1000;'}
+      camera={'active: true; fov: 75; near: 0.01; far: 1000;'}
       ref={cameraRef}
       position={position}
       // rotation={rotation}
