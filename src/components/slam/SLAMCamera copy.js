@@ -92,7 +92,7 @@ const CameraView = () => {
                 y: -currentLookRotation.y,
                 z: -currentLookRotation.z
               });
-
+              
               isFirstPose.current = false;
             }
             else {
