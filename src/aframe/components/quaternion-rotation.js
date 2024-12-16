@@ -5,7 +5,7 @@ if (!AFRAME.components["quaternion-rotation"])
 
     init: function () {
       this.object3D = this.el.object3D;
-      //this.object3D.rotation.reorder('YXZ');
+      this.object3D.rotation.reorder('YXZ');
     },
     
     update: function () {

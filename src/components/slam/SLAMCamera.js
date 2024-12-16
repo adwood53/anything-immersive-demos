@@ -79,12 +79,13 @@ const CameraView = () => {
           if (pose) {
             if (isFirstFrameLostPose.current == false) {
               looker.setAttribute("look-controls", "enabled: false");
+              looker.setAttribute("rotation", "0 0 0");
               isFirstFrameLostPose.current = true;
             }
             //console.log("have");
             
             // Smoothing factor: this defines how fast you want to smooth the transition
-            const smoothingFactor = 0.35; // Adjust this value to control the smoothing speed
+            const smoothingFactor = 0.5; // Adjust this value to control the smoothing speed
 
             // Target position and rotation from the pose array
             const targetPosition = new THREE.Vector3(pose[12], pose[13], pose[14]);
@@ -101,12 +102,12 @@ const CameraView = () => {
 
             // Update the camera's position and rotation
             positionRef.current = smoothedPosition;
+            rotationRef.current = smoothedQuaternion;
             looker.setAttribute('position', {
               x: positionRef.current.x,
               y: -positionRef.current.y,
               z: -positionRef.current.z
             });
-            rotationRef.current = smoothedQuaternion;
             camera.setAttribute('quaternion-rotation', {
               x: -rotationRef.current.x,
               y: rotationRef.current.y,
@@ -118,20 +119,8 @@ const CameraView = () => {
           else {
             // console.log("lost");]
             if (isFirstFrameLostPose.current == true) {
-              looker.setAttribute('position', "0 0 0");
-              rotationRef.current = {
-                x: -rotationRef.current.x,
-                y: -rotationRef.current.y,
-                z: -rotationRef.current.z,
-                w: rotationRef.current.w
-              };
-              camera.setAttribute('quaternion-rotation', {
-                x: -rotationRef.current.x,
-                y: rotationRef.current.y,
-                z: rotationRef.current.z,
-                w: rotationRef.current.w
-              });
-
+              rotationRef.current = { x: 0, y: 0, z: 0, w: 1 };
+              camera.setAttribute('quaternion-rotation', rotationRef.current);
               looker.setAttribute("look-controls", "enabled: true");
               isFirstFrameLostPose.current = false;
             }
