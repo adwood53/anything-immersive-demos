@@ -4,16 +4,17 @@ import { useEffect, useRef } from 'react';
 import styles from './DeviceCamera.module.css';
 
 const CameraView = () => {
+  const isSLAMInitializedRef = useRef(false);
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
-  const isSLAMInitialized = useRef(false);
-  const isFirstFrameLostPose = useRef(true);
-  const positionRef = useRef(new THREE.Vector3(0, 0, 0));
-  const rotationRef = useRef(new THREE.Quaternion(0, 0, 0, 1));
+  const isFirstFrameLostPoseRef = useRef(true);
+  const posePositionRef = useRef(new THREE.Vector3(0, 0, 0));
+  const poseRotationRef = useRef(new THREE.Quaternion(0, 0, 0, 1));
+  const previousLookRotationRef = useRef(new THREE.Vector3(0, 0, 0));
   
   useEffect(() => {
     const camera = document.querySelector('a-camera');
-    const looker = camera.parentNode;
+    const lookControls = document.getElementById('camera-controls');
 
     const initializeSLAM = async () => {
       const [{ AlvaAR }, { Camera, resize2cover, onFrame }] =
@@ -72,12 +73,12 @@ const CameraView = () => {
 
           // Have Pose
           if (pose) {
-            if (isFirstFrameLostPose.current == false) {
+            if (isFirstFrameLostPoseRef.current == false) {
               // camera.setAttribute("rotation", "0 0 0");
               // rotationRef.current = camera.getAttribute("quaternion-rotation");
-              looker.setAttribute("look-controls", "enabled: false");
-              looker.setAttribute("rotation", "0 0 0");
-              isFirstFrameLostPose.current = true;
+              lookControls.setAttribute("look-controls", "enabled: false");
+              // lookControls.setAttribute("rotation", "0 0 0");
+              isFirstFrameLostPoseRef.current = true;
             }
             
             // Smoothing factor: this defines how fast you want to smooth the transition
@@ -88,59 +89,87 @@ const CameraView = () => {
             const poseMatrix = new THREE.Matrix4().fromArray(pose);
             const targetRotation = new THREE.Quaternion().setFromRotationMatrix(poseMatrix).normalize();
 
-            const currentPosition = new THREE.Vector3(positionRef.current.x, positionRef.current.y, positionRef.current.z);
-            const currentRotation = new THREE.Quaternion(rotationRef.current.x, rotationRef.current.y, rotationRef.current.z, rotationRef.current.w).normalize();
+            const smoothedPosition = posePositionRef.current.lerp(targetPosition, smoothingFactor);
+            const smoothedRotation = poseRotationRef.current.normalize().slerp(targetRotation, smoothingFactor).normalize();
 
-            const smoothedPosition = currentPosition.lerp(targetPosition, smoothingFactor);
-            const smoothedRotation = currentRotation.slerp(targetRotation, smoothingFactor).normalize();
-
-            // Update the camera's position and rotation
-            looker.setAttribute('position', {
+            setCameraPosition({
               x: smoothedPosition.x,
               y: -smoothedPosition.y,
               z: -smoothedPosition.z
             });
-            camera.setAttribute('quaternion-rotation', {
+            setCameraRotation({
               x: -smoothedRotation.x,
               y: smoothedRotation.y,
               z: smoothedRotation.z,
               w: smoothedRotation.w
             });
-            positionRef.current = smoothedPosition;
-            rotationRef.current = smoothedRotation;
+            posePositionRef.current = smoothedPosition;
+            poseRotationRef.current = smoothedRotation;
           }
           // Lost Pose
           else {
-            if (isFirstFrameLostPose.current == true) {
-              rotationRef.current = {
-                x: 0,
-                y: 0,
-                z: 0,
-                w: 1
-              };
-              camera.setAttribute('quaternion-rotation', rotationRef.current);
-              looker.setAttribute("look-controls", "enabled: true");
-              isFirstFrameLostPose.current = false;
+            if (isFirstFrameLostPoseRef.current == true) {
+              lookControls.setAttribute("look-controls", "enabled: true");
+              isFirstFrameLostPoseRef.current = false;
             }
 
-            const dots = alva.getFramePoints();
-            for (const p of dots) {
-              ctx.fillStyle = 'white';
-              ctx.fillRect(p.x, p.y, 2, 2);
+            const currentLookRotation = lookControls.getAttribute('rotation');
+            const lookVelocity = {
+              x: currentLookRotation.x - previousLookRotationRef.current.x,
+              y: currentLookRotation.y - previousLookRotationRef.current.y,
+              z: currentLookRotation.z - previousLookRotationRef.current.z
+            };
+            const lookVelocityRad = new THREE.Vector3(
+              THREE.MathUtils.degToRad(lookVelocity.x),
+              THREE.MathUtils.degToRad(lookVelocity.y),
+              THREE.MathUtils.degToRad(lookVelocity.z)
+            );
+            const lookVelocityEuler = new THREE.Euler(lookVelocityRad.x, lookVelocityRad.y, lookVelocityRad.z, 'YXZ');
+            const lookVelocityQuaternion = new THREE.Quaternion();
+            lookVelocityQuaternion.setFromEuler(lookVelocityEuler);
+            poseRotationRef.current.premultiply(lookVelocityQuaternion).normalize();
+            setCameraRotation(camera, poseRotationRef)
+
+            // Debug
+            {
+              const dots = alva.getFramePoints();
+              for (const p of dots) {
+                ctx.fillStyle = 'white';
+                ctx.fillRect(p.x, p.y, 2, 2);
+              }
             }
           }
+
+          previousLookRotationRef.current = lookControls.getAttribute('rotation');
         }
 
         return true;
       }, 30);
     };
 
-    if (!isSLAMInitialized.current)
+    if (!isSLAMInitializedRef.current)
     {
       initializeSLAM().catch((error) => {
         console.error('Error initializing SLAM:', error);
       });
-      isSLAMInitialized.current = true;
+      isSLAMInitializedRef.current = true;
+    }
+
+    const setCameraPosition = (position) => {
+      camera.setAttribute('position', {
+        x: position.x,
+        y: position.y,
+        z: position.z
+      });
+    }
+    
+    const setCameraRotation = (rotation) => {
+      camera.setAttribute('quaternion-rotation', {
+        x: rotation.x,
+        y: rotation.y,
+        z: rotation.z,
+        w: rotation.w
+      });
     }
   }, []);
 
