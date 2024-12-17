@@ -108,7 +108,7 @@ function Camera({ config = {} }) {
       rotation
       quaternion-rotation
       wasd-controls={`enabled: false`}
-      look-controls={`enabled: false`}
+      look-controls={`enabled: true`}
     ></a-camera>
     // <a-camera
     //   camera={'active: true; fov: 75; near: 0.01; far: 1000;'}
