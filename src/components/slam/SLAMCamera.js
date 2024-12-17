@@ -72,14 +72,12 @@ const CameraView = () => {
 
           // Have Pose
           if (pose) {
-            // if (isFirstFrameLostPose.current == false) {
-            //   camera.setAttribute("look-controls", "enabled: false");
-            //   // camera.setAttribute("rotation", "0 0 0");
-            //   rotationRef.current = camera.getAttribute("quaternion-rotation");
-            //   console.log(rotationRef.current);
-            //   isFirstFrameLostPose.current = true;
-            // }
-            //console.log("have");
+            if (isFirstFrameLostPose.current == false) {
+              // camera.setAttribute("rotation", "0 0 0");
+              // rotationRef.current = camera.getAttribute("quaternion-rotation");
+              camera.setAttribute("look-controls", "enabled: false");
+              isFirstFrameLostPose.current = true;
+            }
             
             // Smoothing factor: this defines how fast you want to smooth the transition
             const smoothingFactor = 0.5; // Adjust this value to control the smoothing speed
@@ -87,38 +85,37 @@ const CameraView = () => {
             // Target position and rotation from the pose array
             const targetPosition = new THREE.Vector3(pose[12], pose[13], pose[14]);
             const poseMatrix = new THREE.Matrix4().fromArray(pose);
-            const targetRotation = new THREE.Quaternion().setFromRotationMatrix(poseMatrix)
+            const targetRotation = new THREE.Quaternion().setFromRotationMatrix(poseMatrix).normalize();
 
             const currentPosition = new THREE.Vector3(positionRef.current.x, positionRef.current.y, positionRef.current.z);
             const currentRotation = new THREE.Quaternion(rotationRef.current.x, rotationRef.current.y, rotationRef.current.z, rotationRef.current.w).normalize();
 
             const smoothedPosition = currentPosition.lerp(targetPosition, smoothingFactor);
-            const smoothedRotation = currentRotation.slerp(targetRotation.normalize(), smoothingFactor).normalize();
+            const smoothedRotation = currentRotation.slerp(targetRotation, smoothingFactor).normalize();
 
             // Update the camera's position and rotation
-            positionRef.current = smoothedPosition;
-            rotationRef.current = smoothedRotation;
             camera.setAttribute('position', {
-              x: positionRef.current.x,
-              y: -positionRef.current.y,
-              z: -positionRef.current.z
+              x: smoothedPosition.x,
+              y: -smoothedPosition.y,
+              z: -smoothedPosition.z
             });
             camera.setAttribute('quaternion-rotation', {
-              x: -rotationRef.current.x,
-              y: rotationRef.current.y,
-              z: rotationRef.current.z,
-              w: rotationRef.current.w
+              x: -smoothedRotation.x,
+              y: smoothedRotation.y,
+              z: smoothedRotation.z,
+              w: smoothedRotation.w
             });
+            positionRef.current = smoothedPosition;
+            rotationRef.current = smoothedRotation;
           }
           // Lost Pose
           else {
-            // console.log("lost");]
-            // if (isFirstFrameLostPose.current == true) {
-            //   // rotationRef.current = { x: 0, y: 0, z: 0, w: 1 };
-            //   // camera.setAttribute("look-controls", "enabled: true");
-            //   // camera.setAttribute('quaternion-rotation', rotationRef.current);
-            //   isFirstFrameLostPose.current = false;
-            // }
+            if (isFirstFrameLostPose.current == true) {
+              // rotationRef.current = { x: 0, y: 0, z: 0, w: 1 };
+              // camera.setAttribute('quaternion-rotation', rotationRef.current);
+              camera.setAttribute("look-controls", "enabled: true");
+              isFirstFrameLostPose.current = false;
+            }
 
             const dots = alva.getFramePoints();
             for (const p of dots) {
