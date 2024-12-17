@@ -103,7 +103,7 @@ function Camera({ config = {} }) {
     // </a-entity>
 
     <>
-      <a-entity id="camera-controls" position={position} wasd-controls={`enabled: ${enableWASD}`} look-controls={`enabled: ${enableLook}`}></a-entity>
+      <a-entity id="camera-controls" position={position} rotation wasd-controls={`enabled: ${enableWASD}`} look-controls={`enabled: false`}></a-entity>
       <a-camera
         camera={'active: true; fov: 75; near: 0.01; far: 1000;'}
         ref={cameraRef}

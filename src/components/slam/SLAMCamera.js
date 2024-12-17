@@ -71,13 +71,11 @@ const CameraView = () => {
           const frame = ctx.getImageData(0, 0, $canvas.width, $canvas.height);
           const pose = alva.findCameraPose(frame);
 
+          const currentLookRotation = lookControls.getAttribute('rotation');
           // Have Pose
           if (pose) {
             if (isFirstFrameLostPoseRef.current == false) {
-              // camera.setAttribute("rotation", "0 0 0");
-              // rotationRef.current = camera.getAttribute("quaternion-rotation");
               lookControls.setAttribute("look-controls", "enabled: false");
-              // lookControls.setAttribute("rotation", "0 0 0");
               isFirstFrameLostPoseRef.current = true;
             }
             
@@ -89,22 +87,16 @@ const CameraView = () => {
             const poseMatrix = new THREE.Matrix4().fromArray(pose);
             const targetRotation = new THREE.Quaternion().setFromRotationMatrix(poseMatrix).normalize();
 
-            const smoothedPosition = posePositionRef.current.lerp(targetPosition, smoothingFactor);
-            const smoothedRotation = poseRotationRef.current.normalize().slerp(targetRotation, smoothingFactor).normalize();
+            // Invert specific axis
+            targetPosition.y = -targetPosition.y; 
+            targetPosition.z = -targetPosition.z; 
+            targetRotation.x = -targetRotation.x;
 
-            setCameraPosition({
-              x: smoothedPosition.x,
-              y: -smoothedPosition.y,
-              z: -smoothedPosition.z
-            });
-            setCameraRotation({
-              x: -smoothedRotation.x,
-              y: smoothedRotation.y,
-              z: smoothedRotation.z,
-              w: smoothedRotation.w
-            });
-            posePositionRef.current = smoothedPosition;
-            poseRotationRef.current = smoothedRotation;
+            posePositionRef.current = posePositionRef.current.lerp(targetPosition, smoothingFactor);
+            poseRotationRef.current = poseRotationRef.current.normalize().slerp(targetRotation, smoothingFactor).normalize();
+
+            setCameraPosition(posePositionRef.current);
+            setCameraRotation(poseRotationRef.current);
           }
           // Lost Pose
           else {
@@ -113,22 +105,19 @@ const CameraView = () => {
               isFirstFrameLostPoseRef.current = false;
             }
 
-            const currentLookRotation = lookControls.getAttribute('rotation');
-            const lookVelocity = {
-              x: currentLookRotation.x - previousLookRotationRef.current.x,
-              y: currentLookRotation.y - previousLookRotationRef.current.y,
-              z: currentLookRotation.z - previousLookRotationRef.current.z
-            };
-            const lookVelocityRad = new THREE.Vector3(
-              THREE.MathUtils.degToRad(lookVelocity.x),
-              THREE.MathUtils.degToRad(lookVelocity.y),
-              THREE.MathUtils.degToRad(lookVelocity.z)
+            const lookVelocity = new THREE.Vector3(
+              currentLookRotation.x - previousLookRotationRef.current.x,
+              currentLookRotation.y - previousLookRotationRef.current.y,
+              currentLookRotation.z - previousLookRotationRef.current.z
             );
+
+            const lookVelocityRad = lookVelocity.clone().multiplyScalar(THREE.MathUtils.DEG2RAD);
             const lookVelocityEuler = new THREE.Euler(lookVelocityRad.x, lookVelocityRad.y, lookVelocityRad.z, 'YXZ');
             const lookVelocityQuaternion = new THREE.Quaternion();
             lookVelocityQuaternion.setFromEuler(lookVelocityEuler);
-            poseRotationRef.current.premultiply(lookVelocityQuaternion).normalize();
-            setCameraRotation(camera, poseRotationRef)
+            poseRotationRef.current.multiply(lookVelocityQuaternion)
+            poseRotationRef.current.z = 0;
+            setCameraRotation(poseRotationRef.current);
 
             // Debug
             {
@@ -140,7 +129,7 @@ const CameraView = () => {
             }
           }
 
-          previousLookRotationRef.current = lookControls.getAttribute('rotation');
+          previousLookRotationRef.current = new THREE.Vector3(currentLookRotation.x, currentLookRotation.y, currentLookRotation.z);
         }
 
         return true;
