@@ -113,10 +113,10 @@ const CameraView = () => {
           else {
             if (isFirstFrameLostPose.current == true) {
               rotationRef.current = {
-                x: -rotationRef.current.x,
-                y: -rotationRef.current.y,
-                z: -rotationRef.current.z,
-                w: -rotationRef.current.w
+                x: 0,
+                y: 0,
+                z: 0,
+                w: 1
               };
               camera.setAttribute('quaternion-rotation', rotationRef.current);
               looker.setAttribute("look-controls", "enabled: true");
