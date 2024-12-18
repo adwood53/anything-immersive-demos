@@ -137,7 +137,7 @@ const CameraView = () => {
               lookVelocity.multiply(previousLookRotationRef.current.clone().invert());
               poseRotationRef.current.multiply(lookVelocity);
               poseRotationRef.current.normalize();
-              // poseRotationRef.current.z = 0;
+              poseRotationRef.current.z = 0;
               setCameraRotation(poseRotationRef.current);
             }
 
