@@ -45,5 +45,8 @@
     border-radius: 1em;
     background-color: rgba(0, 0, 0, 0.531);
     z-index: 100;
-    width: 250px;
+    width: 175px;
+    display: flex;
+    flex-direction: column;
+    gap: 7.5px;
 }

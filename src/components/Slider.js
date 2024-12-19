@@ -31,7 +31,6 @@ const Slider = ({ onValueChanged, minValue = 0, maxValue = 1, defaultValue = 0.5
 
 const styles = {
   container: {
-    padding: "10px",
     gap: "5px",
     display: "flex",
     flexDirection: "column",

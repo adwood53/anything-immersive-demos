@@ -11,7 +11,7 @@ function Button({ onClick, label = "Button", style = {} }) {
 
 const styles = {
   button: {
-    padding: "10px 20px",
+    padding: "2.5px 15px",
     backgroundColor: "#E79023",
     color: "#fff",
     border: "none",

@@ -41,7 +41,6 @@ const styles = {
   container: {
     alignItems: "left",
     fontFamily: "Arial, sans-serif",
-    padding: "10px",
   },
   toggle: {
     width: "50px",

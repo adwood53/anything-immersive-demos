@@ -26,7 +26,7 @@ const CameraView = () => {
 
   useEffect(() => {
     const camera = document.querySelector('a-camera');
-    const lookControls = document.getElementById('camera-controls');
+    // const lookControls = document.getElementById('camera-controls');
 
     const initializeSLAM = async () => {
       const [{ AlvaAR }, { Camera, resize2cover, onFrame }] =
@@ -81,12 +81,12 @@ const CameraView = () => {
           const frame = ctx.getImageData(0, 0, $canvas.width, $canvas.height);
           const pose = alva.findCameraPose(frame);
 
-          const currentLookRotation = lookControls.object3D.quaternion;
+          // const currentLookRotation = lookControls.object3D.quaternion;
           if (pose) {
-            if (isFirstFrameLostPoseRef.current == false) {
-              lookControls.setAttribute("look-controls", "enabled: false");
-              isFirstFrameLostPoseRef.current = true;
-            }
+            // if (isFirstFrameLostPoseRef.current == false) {
+            //   lookControls.setAttribute("look-controls", "enabled: false");
+            //   isFirstFrameLostPoseRef.current = true;
+            // }
             
             const smoothingFactor = 0.5; // Adjust this value to control the smoothing speed
             const targetPosition = new THREE.Vector3(pose[12], pose[13], pose[14]);
@@ -103,30 +103,30 @@ const CameraView = () => {
             setCameraPosition(posePositionRef.current);
             setCameraRotation(poseRotationRef.current);
           } else {
-            if (isFirstFrameLostPoseRef.current == true) {
-              lookControls.setAttribute("look-controls", "enabled: true");
-              isFirstFrameLostPoseRef.current = false;
-            }
+            // if (isFirstFrameLostPoseRef.current == true) {
+            //   lookControls.setAttribute("look-controls", "enabled: true");
+            //   isFirstFrameLostPoseRef.current = false;
+            // }
             
-            if (!previousLookRotationRef.current.equals(currentLookRotation)) {
-              previousLookRotationRef.current.normalize();
-              currentLookRotation.normalize();
-              const lookVelocity = new THREE.Quaternion();
-              lookVelocity.copy(currentLookRotation);
-              lookVelocity.multiply(previousLookRotationRef.current.clone().invert());
-              poseRotationRef.current.multiply(lookVelocity);
-              poseRotationRef.current.normalize();
-              setCameraRotation(poseRotationRef.current);
-            }
+            // if (!previousLookRotationRef.current.equals(currentLookRotation)) {
+            //   previousLookRotationRef.current.normalize();
+            //   currentLookRotation.normalize();
+            //   const lookVelocity = new THREE.Quaternion();
+            //   lookVelocity.copy(currentLookRotation);
+            //   lookVelocity.multiply(previousLookRotationRef.current.clone().invert());
+            //   poseRotationRef.current.multiply(lookVelocity);
+            //   poseRotationRef.current.normalize();
+            //   setCameraRotation(poseRotationRef.current);
+            // }
 
+            // previousLookRotationRef.current.copy(currentLookRotation);
+            
             const dots = alva.getFramePoints();
             for (const p of dots) {
               ctx.fillStyle = 'white';
               ctx.fillRect(p.x, p.y, 2, 2);
             }
           }
-
-          previousLookRotationRef.current.copy(currentLookRotation);
         }
 
         return true;
@@ -208,11 +208,11 @@ const CameraView = () => {
           <Toggle
             onToggle={onClaheToggle}
             defaultState={isClaheEnabled}
-            label={"Use Clahe"} />
+            label={"Use CLAHE"} />
           <Toggle
             onToggle={onP3pToggle}
             defaultState={isP3pEnabled}
-            label={"Use P3p"} />
+            label={"Use P3P"} />
           <Toggle
             onToggle={onDebugToggle}
             defaultState={isDebugEnabled}
