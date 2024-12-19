@@ -7,14 +7,14 @@ System::System() { }
 System::~System() { }
 
 // Initializes the SLAM system with camera parameters
-void System::configure(int imageWidth, int imageHeight, double fx, double fy, double cx, double cy, double k1, double k2, double p1, double p2)
+void System::configure(int imageWidth, int imageHeight, double fx, double fy, double cx, double cy, double k1, double k2, double p1, double p2, bool claheEnabled = false, float mapKeyframeFilteringRatio = 0.95, bool p3pEnabled = true, bool debug = false)
 {
     // Initialize system state with image dimensions and cell size for feature detection
-    state_ = std::make_shared<State>(imageWidth, imageHeight, 40);
-    state_->debug_ = false;
-    state_->claheEnabled_ = true;  // CLAHE = Contrast Limited Adaptive Histogram Equalization
-    state_->mapKeyframeFilteringRatio_ = 0.95;  // Controls keyframe selection threshold
-    state_->p3pEnabled_ = true;  // Perspective-3-Point algorithm for pose estimation
+    state_ = std::make_shared<State>(imageWidth, imageHeight, 35);
+    state_->debug_ = debug;
+    state_->claheEnabled_ = claheEnabled;  // CLAHE = Contrast Limited Adaptive Histogram Equalization
+    state_->mapKeyframeFilteringRatio_ = mapKeyframeFilteringRatio;  // Controls keyframe selection threshold
+    state_->p3pEnabled_ = p3pEnabled;  // Perspective-3-Point algorithm for pose estimation
 
     // Log configuration parameters
     std::cout << "- [System]: Configure";

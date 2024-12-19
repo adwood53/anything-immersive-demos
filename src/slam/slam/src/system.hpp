@@ -25,7 +25,7 @@ public:
 
     ~System();
 
-    void configure(int imageWidth, int imageHeight, double fx, double fy, double cx, double cy, double k1, double k2, double p1, double p2);
+    void configure(int imageWidth, int imageHeight, double fx, double fy, double cx, double cy, double k1, double k2, double p1, double p2, bool claheEnabled, float mapKeyframeFilteringRatio, bool p3pEnabled, bool debug);
 
     void reset();
 

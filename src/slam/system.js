@@ -77,7 +77,11 @@ class AlvaAR
             this.intrinsics.k1,
             this.intrinsics.k2,
             this.intrinsics.p1,
-            this.intrinsics.p2
+            this.intrinsics.p2,
+            false,
+            0.95,
+            true,
+            true
         );
     }
 
