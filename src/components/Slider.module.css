@@ -1,0 +1,36 @@
+/* Slider container styles */
+.slider {
+    width: 100%;
+    appearance: none;
+    height: 8px;
+    background: #ddd;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+  }
+  
+/* Change the color of the slider knob */
+.slider::-webkit-slider-thumb {
+appearance: none;
+width: 16px;
+height: 16px;
+border-radius: 50%;
+background-color: #7466E2; /* Slider knob color */
+cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+width: 16px;
+height: 16px;
+border-radius: 50%;
+background-color: #7466E2; /* Slider knob color for Firefox */
+cursor: pointer;
+}
+
+.slider::-ms-thumb {
+width: 16px;
+height: 16px;
+border-radius: 50%;
+background-color: #7466E2; /* Slider knob color for IE/Edge */
+cursor: pointer;
+}

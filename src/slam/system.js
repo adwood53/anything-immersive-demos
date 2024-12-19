@@ -44,7 +44,7 @@ class SharedMemory
 
 class AlvaAR
 {
-    static async Initialize( width, height, fov = 45 )
+    static async Initialize( width, height, fov = 45, frameMaxCellSize, mapKeyframeFilteringRatio = 0.95, p3pEnabled = true, claheEnabled = false, debugEnabled = false)
     {
         const wasm = {};
 
@@ -52,10 +52,10 @@ class AlvaAR
 
         await wasm.ready;
 
-        return new AlvaAR( wasm, width, height, fov );
+        return new AlvaAR( wasm, width, height, fov, frameMaxCellSize, mapKeyframeFilteringRatio, p3pEnabled, claheEnabled, debugEnabled );
     }
 
-    constructor( wasm, width, height, fov )
+    constructor( wasm, width, height, fov, frameMaxCellSize, mapKeyframeFilteringRatio, p3pEnabled, claheEnabled, debugEnabled)
     {
         this.wasm = wasm;
         this.intrinsics = this.getCameraIntrinsics( width, height, fov );
@@ -78,10 +78,31 @@ class AlvaAR
             this.intrinsics.k2,
             this.intrinsics.p1,
             this.intrinsics.p2,
-            false,
-            0.95,
-            true,
-            true
+            frameMaxCellSize,
+            mapKeyframeFilteringRatio,
+            p3pEnabled,
+            claheEnabled,
+            debugEnabled
+        );
+    }
+
+    reconfigure(frameMaxCellSize, mapKeyframeFilteringRatio, p3pEnabled, claheEnabled, debugEnabled) {
+        this.system.configure(
+            this.intrinsics.width,
+            this.intrinsics.height,
+            this.intrinsics.fx,
+            this.intrinsics.fy,
+            this.intrinsics.cx,
+            this.intrinsics.cy,
+            this.intrinsics.k1,
+            this.intrinsics.k2,
+            this.intrinsics.p1,
+            this.intrinsics.p2,
+            frameMaxCellSize,
+            mapKeyframeFilteringRatio,
+            p3pEnabled,
+            claheEnabled,
+            debugEnabled
         );
     }
 
@@ -238,6 +259,21 @@ class AlvaAR
     {
         this.system.reset();
     }
+
+    dispose() {
+      // Free memory allocated for the camera pose, points, IMU, and image
+      this.memCam.dispose();
+      this.memObj.dispose();
+      this.memPts.dispose();
+      this.memIMU.dispose();
+      this.memImg.dispose();
+
+      // Reset the system if needed
+      //this.system.reset();
+
+      // Optionally, free other resources if required
+      this.wasm.module._free(this.ptr);
+  }
 }
 
 export { AlvaAR };
