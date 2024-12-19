@@ -1,5 +1,4 @@
 @echo off
-setlocal EnableDelayedExpansion
 
 :: The lib directory
 set "LIB_ROOT=%CD%"
@@ -50,7 +49,7 @@ if exist "%LIB_ROOT%\eigen\build" rd /s /q "%LIB_ROOT%\eigen\build"
 mkdir "%LIB_ROOT%\eigen\build"
 cd "%LIB_ROOT%\eigen\build"
 call emcmake cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=17 -DCMAKE_TOOLCHAIN_FILE="%EMSCRIPTEN_CMAKE_DIR%" -DCMAKE_CXX_FLAGS="%BUILD_FLAGS%" -DCMAKE_C_FLAGS="%BUILD_FLAGS%" -DCMAKE_INSTALL_PREFIX="%INSTALL_DIR%\eigen" -DBUILD_SHARED_LIBS=OFF
-call cmake --build . --target install
+call emmake ninja -j %NUMBER_OF_PROCESSORS% install
 cd "%LIB_ROOT%"
 exit /b
 
@@ -60,8 +59,8 @@ if exist "%INSTALL_DIR%\obindex2\" rd /s /q "%INSTALL_DIR%\obindex2"
 if exist "%LIB_ROOT%\obindex2\build" rd /s /q "%LIB_ROOT%\obindex2\build"
 mkdir "%LIB_ROOT%\obindex2\build"
 cd "%LIB_ROOT%\obindex2\build"
-call emcmake cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=17 -DCMAKE_TOOLCHAIN_FILE="%EMSCRIPTEN_CMAKE_DIR%" -DCMAKE_CXX_FLAGS="%BUILD_FLAGS%" -DCMAKE_C_FLAGS="%BUILD_FLAGS%" -DCMAKE_INSTALL_PREFIX="%INSTALL_DIR%\obindex2" -DBUILD_SHARED_LIBS=OFF -DOpenCV_DIR="%LIB_ROOT%\opencv\build" -DCMAKE_CXX_STANDARD_REQUIRED=ON
-call cmake --build . --target install
+call emcmake cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=17 -DCMAKE_TOOLCHAIN_FILE="%EMSCRIPTEN_CMAKE_DIR%" -DCMAKE_CXX_FLAGS="%BUILD_FLAGS% -s USE_BOOST_HEADERS=1" -DCMAKE_C_FLAGS="%BUILD_FLAGS% -s USE_BOOST_HEADERS=1" -DCMAKE_INSTALL_PREFIX="%INSTALL_DIR%\obindex2" -DBUILD_SHARED_LIBS=OFF -DOpenCV_DIR="%LIB_ROOT%\opencv\build" -DCMAKE_CXX_STANDARD_REQUIRED=ON
+call emmake ninja -j %NUMBER_OF_PROCESSORS% install
 cd "%LIB_ROOT%"
 exit /b
 
@@ -71,8 +70,8 @@ if exist "%INSTALL_DIR%\ibow_lcd\" rd /s /q "%INSTALL_DIR%\ibow_lcd"
 if exist "%LIB_ROOT%\ibow_lcd\build" rd /s /q "%LIB_ROOT%\ibow_lcd\build"
 mkdir "%LIB_ROOT%\ibow_lcd\build"
 cd "%LIB_ROOT%\ibow_lcd\build"
-call emcmake cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=17 -DCMAKE_TOOLCHAIN_FILE="%EMSCRIPTEN_CMAKE_DIR%" -DCMAKE_CXX_FLAGS="%BUILD_FLAGS%" -DCMAKE_C_FLAGS="%BUILD_FLAGS%" -DCMAKE_INSTALL_PREFIX="%INSTALL_DIR%\ibow_lcd" -DBUILD_SHARED_LIBS=OFF -DOpenCV_DIR="%LIB_ROOT%\opencv\build" -DCMAKE_CXX_STANDARD_REQUIRED=ON
-call cmake --build . --target install
+call emcmake cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=17 -DCMAKE_TOOLCHAIN_FILE="%EMSCRIPTEN_CMAKE_DIR%" -DCMAKE_CXX_FLAGS="%BUILD_FLAGS% -s USE_BOOST_HEADERS=1" -DCMAKE_C_FLAGS="%BUILD_FLAGS% -s USE_BOOST_HEADERS=1" -DCMAKE_INSTALL_PREFIX="%INSTALL_DIR%\ibow_lcd" -DBUILD_SHARED_LIBS=OFF -DOpenCV_DIR="%LIB_ROOT%\opencv\build" -DCMAKE_CXX_STANDARD_REQUIRED=ON
+call emmake ninja -j %NUMBER_OF_PROCESSORS% install
 cd "%LIB_ROOT%"
 exit /b
 
@@ -83,7 +82,7 @@ if exist "%LIB_ROOT%\Sophus\build" rd /s /q "%LIB_ROOT%\Sophus\build"
 mkdir "%LIB_ROOT%\Sophus\build"
 cd "%LIB_ROOT%\Sophus\build"
 call emcmake cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=17 -DCMAKE_TOOLCHAIN_FILE="%EMSCRIPTEN_CMAKE_DIR%" -DCMAKE_CXX_FLAGS="%BUILD_FLAGS%" -DCMAKE_C_FLAGS="%BUILD_FLAGS%" -DCMAKE_INSTALL_PREFIX="%INSTALL_DIR%\Sophus" -DBUILD_SHARED_LIBS=OFF -DEIGEN3_INCLUDE_DIR="%LIB_ROOT%\eigen"
-call cmake --build . --target install
+call emmake ninja -j %NUMBER_OF_PROCESSORS% install
 cd "%LIB_ROOT%"
 exit /b
 
@@ -94,7 +93,7 @@ if exist "%LIB_ROOT%\ceres-solver\build" rd /s /q "%LIB_ROOT%\ceres-solver\build
 mkdir "%LIB_ROOT%\ceres-solver\build"
 cd "%LIB_ROOT%\ceres-solver\build"
 call emcmake cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=17 -DCMAKE_TOOLCHAIN_FILE="%EMSCRIPTEN_CMAKE_DIR%" -DCMAKE_CXX_FLAGS="%BUILD_FLAGS%" -DCMAKE_C_FLAGS="%BUILD_FLAGS%" -DCMAKE_INSTALL_PREFIX="%INSTALL_DIR%\ceres-solver" -DBUILD_SHARED_LIBS=OFF -DBUILD_EXAMPLES:BOOL=0 -DBUILD_TESTING:BOOL=0 -DEIGENSPARSE:BOOL=1 -DCERES_THREADING_MODEL="NO_THREADS" -DMINIGLOG:BOOL=1 -DEigen3_DIR="%LIB_ROOT%\eigen\build"
-call cmake --build . --target install
+call emmake ninja -j %NUMBER_OF_PROCESSORS% install
 powershell -Command "Get-ChildItem -Path '%INSTALL_DIR%\ceres-solver\include' -Filter *.h -Recurse | ForEach-Object { (Get-Content $_.FullName) -replace 'glog/logging.h', 'ceres/internal/miniglog/glog/logging.h' | Set-Content $_.FullName }"
 cd "%LIB_ROOT%"
 exit /b
@@ -106,7 +105,7 @@ if exist "%LIB_ROOT%\opengv\build" rd /s /q "%LIB_ROOT%\opengv\build"
 mkdir "%LIB_ROOT%\opengv\build"
 cd "%LIB_ROOT%\opengv\build"
 call emcmake cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=17 -DCMAKE_TOOLCHAIN_FILE="%EMSCRIPTEN_CMAKE_DIR%" -DCMAKE_CXX_FLAGS="%BUILD_FLAGS%" -DCMAKE_C_FLAGS="%BUILD_FLAGS%" -DCMAKE_INSTALL_PREFIX="%INSTALL_DIR%\opengv" -DBUILD_SHARED_LIBS=OFF -DEIGEN_INCLUDE_DIR="%LIB_ROOT%\eigen" -DCMAKE_CXX_STANDARD_REQUIRED=ON
-call cmake --build . --target install
+call emmake ninja -j %NUMBER_OF_PROCESSORS% install
 cd "%LIB_ROOT%"
 exit /b
 

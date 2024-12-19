@@ -14,8 +14,8 @@ endif ()
 
 # Set Emscripten toolchain, if not defined
 if (NOT CMAKE_TOOLCHAIN_FILE)
-    message(STATUS "CMAKE_TOOLCHAIN_FILE not set. Using '~/Development/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake'")
-    set(CMAKE_TOOLCHAIN_FILE "~/Development/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake")
+    message(STATUS "CMAKE_TOOLCHAIN_FILE not set. Using 'C:/Dev/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake'")
+    set(CMAKE_TOOLCHAIN_FILE "C:/Dev/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake")
 endif (NOT CMAKE_TOOLCHAIN_FILE)
 
 # Set "Release" as build type, if not defined

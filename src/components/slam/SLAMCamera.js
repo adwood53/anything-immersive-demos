@@ -15,7 +15,7 @@ const CameraView = () => {
   useEffect(() => {
     const camera = document.querySelector('a-camera');
     const lookControls = document.getElementById('camera-controls');
-    const prism = document.getElementById("model-container-prism");
+    // const prism = document.getElementById("model-container-prism");
 
     const initializeSLAM = async () => {
       const [{ AlvaAR }, { Camera, resize2cover, onFrame }] =
@@ -71,15 +71,6 @@ const CameraView = () => {
           );
           const frame = ctx.getImageData(0, 0, $canvas.width, $canvas.height);
           const pose = alva.findCameraPose(frame);
-          // const planePose = alva.findPlane();
-          // if (planePose)
-          // {
-          //   const t = new THREE.Vector3( planePose[12], planePose[13], planePose[14] );
-          //   const m = new THREE.Matrix4().fromArray( planePose );
-          //   const r = new THREE.Quaternion().setFromRotationMatrix( m );
-          //   r.normalize();
-          //   prism.object3D.quaternion.set(-r.x, r.y, r.z, r.w);
-          // }
 
           const currentLookRotation = lookControls.object3D.quaternion;
           // Have Pose
@@ -114,18 +105,6 @@ const CameraView = () => {
               lookControls.setAttribute("look-controls", "enabled: true");
               isFirstFrameLostPoseRef.current = false;
             }
-            // const lookVelocity = new THREE.Vector3(
-            //   currentLookRotation.x - previousLookRotationRef.current.x,
-            //   currentLookRotation.y - previousLookRotationRef.current.y,
-            //   currentLookRotation.z - previousLookRotationRef.current.z
-            // );
-            // const lookVelocityRad = lookVelocity.clone().multiplyScalar(THREE.MathUtils.DEG2RAD);
-            // const lookVelocityEuler = new THREE.Euler(lookVelocityRad.x, lookVelocityRad.y, lookVelocityRad.z, 'YXZ');
-            // const lookVelocityQuaternion = new THREE.Quaternion();
-            // lookVelocityQuaternion.setFromEuler(lookVelocityEuler);
-            // poseRotationRef.current.multiply(lookControls.object3D.quaternion);
-
-
             // const lookVelocity = new THREE.Quaternion().invert(previousLookRotationRef.current).multiply(currentLookRotation);
             
             if (!previousLookRotationRef.current.equals(currentLookRotation))
@@ -137,7 +116,7 @@ const CameraView = () => {
               lookVelocity.multiply(previousLookRotationRef.current.clone().invert());
               poseRotationRef.current.multiply(lookVelocity);
               poseRotationRef.current.normalize();
-              poseRotationRef.current.z = 0;
+              // poseRotationRef.current.z = 0;
               setCameraRotation(poseRotationRef.current);
             }
 
