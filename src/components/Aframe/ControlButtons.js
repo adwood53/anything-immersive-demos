@@ -1,64 +1,15 @@
+//ControlButtons.js
 'use client';
 import { useEffect, useState } from 'react';
-import '@/aframe/components/gaze-cursor';
 
 function ControlButtons({ config = {} }) {
-  const {
-    effectAll = true,
-    selectionMode = null,
-    gazeTimeout = 1500,
-  } = config; // Destructure the config object
+  const { effectAll = true } = config;
 
   const [visible, setVisible] = useState(false);
   const [selectedModelId, setSelectedModelId] = useState(null);
   const [registeredModels, setRegisteredModels] = useState(new Set());
 
   useEffect(() => {
-    // Setup camera and raycaster for gaze mode
-    const setupGazeSystem = () => {
-      if (selectionMode === 'gaze') {
-        //const camera = document.querySelector('[camera]');
-        const camera = document.querySelector('a-camera');
-        if (!camera) {
-          setTimeout(setupGazeSystem, 100);
-          return;
-        }
-
-        // Remove existing raycaster if any
-        const existingRaycaster = camera.querySelector('[raycaster]');
-        if (existingRaycaster) {
-          existingRaycaster.parentNode.removeChild(existingRaycaster);
-        }
-
-        // Create raycaster entity with cursor
-        const raycasterEntity = document.createElement('a-entity');
-        raycasterEntity.setAttribute('raycaster', {
-          objects: '.selectable',
-          far: 100,
-          interval: 100,
-        });
-
-        // Create gaze cursor
-        const cursor = document.createElement('a-entity');
-        cursor.setAttribute('gaze-cursor', {
-          timeout: gazeTimeout,
-          color: '#FFFFFF',
-          activeColor: '#00FF00',
-        });
-
-        raycasterEntity.appendChild(cursor);
-        camera.appendChild(raycasterEntity);
-      }
-    };
-
-    if (selectionMode === 'gaze') {
-      if (document.readyState === 'complete') {
-        setupGazeSystem();
-      } else {
-        window.addEventListener('load', setupGazeSystem);
-      }
-    }
-
     const scene = document.querySelector('a-scene');
 
     // Model registration and selection handlers
@@ -81,6 +32,8 @@ function ControlButtons({ config = {} }) {
     };
 
     const handleModelSelected = (event) => {
+      console.log('Model selection changed:', event.detail);
+
       if (!effectAll) {
         // Deselect previous model if exists
         if (
@@ -113,7 +66,6 @@ function ControlButtons({ config = {} }) {
     );
 
     return () => {
-      window.removeEventListener('load', setupGazeSystem);
       if (scene) {
         scene.removeEventListener(
           'model-registered',
@@ -129,20 +81,14 @@ function ControlButtons({ config = {} }) {
         );
       }
     };
-  }, [
-    config,
-    setSelectedModelId,
-    effectAll,
-    gazeTimeout,
-    selectedModelId,
-    selectionMode,
-  ]);
+  }, [effectAll, selectedModelId]);
 
   // Get models to control based on mode
   const getTargetModels = () => {
     if (effectAll) {
+      // Only return containers that are selectable (i.e., interactive)
       return Array.from(
-        document.querySelectorAll('.model-container')
+        document.querySelectorAll('.model-container.selectable')
       );
     } else if (selectedModelId) {
       const selected = document.querySelector(

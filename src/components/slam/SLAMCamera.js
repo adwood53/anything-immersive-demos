@@ -7,16 +7,19 @@ import Toggle from '@/components/Toggle';
 import Button from '@/components/Button';
 
 const CameraView = () => {
-  const isSLAMInitializedRef = useRef(false);  // To track initialization status
-  const [isSLAMInitialized, setIsSLAMInitialized] = useState(false);  // State for rendering debug content
-  const [isSLAMControlEnabled, setIsSLAMControlEnabled] = useState(false);  // State for rendering debug content
+  const isSLAMInitializedRef = useRef(false); // To track initialization status
+  const [isSLAMInitialized, setIsSLAMInitialized] = useState(false); // State for rendering debug content
+  const [isSLAMControlEnabled, setIsSLAMControlEnabled] =
+    useState(false); // State for rendering debug content
 
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
   const isFirstFrameLostPoseRef = useRef(true);
   const posePositionRef = useRef(new THREE.Vector3(0, 0, 0));
   const poseRotationRef = useRef(new THREE.Quaternion(0, 0, 0, 1));
-  const previousLookRotationRef = useRef(new THREE.Quaternion(0, 0, 0, 1));
+  const previousLookRotationRef = useRef(
+    new THREE.Quaternion(0, 0, 0, 1)
+  );
   const alvaRef = useRef(null);
   const showFeaturesRef = useRef(true);
   const useInterpolationRef = useRef(true);
@@ -35,7 +38,10 @@ const CameraView = () => {
 
     const initializeSLAM = async () => {
       const [{ AlvaAR }, { Camera, resize2cover, onFrame }] =
-        await Promise.all([import('@/slam/assets/alva_ar.js'), import('@/slam/assets/utils.js')]);
+        await Promise.all([
+          import('@/slam/assets/alva_ar.js'),
+          import('@/slam/assets/utils.js'),
+        ]);
 
       const $container = containerRef.current;
       const $canvas = canvasRef.current;
@@ -63,11 +69,27 @@ const CameraView = () => {
       $video.style.width = `${size.width}px`;
       $video.style.height = `${size.height}px`;
 
-      const alva = await AlvaAR.Initialize($canvas.width, $canvas.height, 45, frameMaxCellSize, mapKeyframeFilteringRatio, isP3pEnabled, isClaheEnabled, isDebugEnabled);
+      const alva = await AlvaAR.Initialize(
+        $canvas.width,
+        $canvas.height,
+        45,
+        frameMaxCellSize,
+        mapKeyframeFilteringRatio,
+        isP3pEnabled,
+        isClaheEnabled,
+        isDebugEnabled
+      );
       alvaRef.current = alva;
-      document.body.addEventListener('click', () => alva.reset(), false);
-      
-      const ctx = $canvas.getContext('2d', { alpha: false, desynchronized: true });
+      document.body.addEventListener(
+        'click',
+        () => alva.reset(),
+        false
+      );
+
+      const ctx = $canvas.getContext('2d', {
+        alpha: false,
+        desynchronized: true,
+      });
       onFrame(() => {
         ctx.clearRect(0, 0, $canvas.width, $canvas.height);
 
@@ -83,7 +105,12 @@ const CameraView = () => {
             size.width,
             size.height
           );
-          const frame = ctx.getImageData(0, 0, $canvas.width, $canvas.height);
+          const frame = ctx.getImageData(
+            0,
+            0,
+            $canvas.width,
+            $canvas.height
+          );
           const pose = alva.findCameraPose(frame);
 
           // const currentLookRotation = lookControls.object3D.quaternion;
@@ -92,10 +119,16 @@ const CameraView = () => {
             //   lookControls.setAttribute("look-controls", "enabled: false");
             //   isFirstFrameLostPoseRef.current = true;
             // }
-            
-            const targetPosition = new THREE.Vector3(pose[12], pose[13], pose[14]);
+
+            const targetPosition = new THREE.Vector3(
+              pose[12],
+              pose[13],
+              pose[14]
+            );
             const poseMatrix = new THREE.Matrix4().fromArray(pose);
-            const targetRotation = new THREE.Quaternion().setFromRotationMatrix(poseMatrix).normalize();
+            const targetRotation = new THREE.Quaternion()
+              .setFromRotationMatrix(poseMatrix)
+              .normalize();
 
             targetPosition.y = -targetPosition.y;
             targetPosition.z = -targetPosition.z;
@@ -103,10 +136,15 @@ const CameraView = () => {
 
             if (useInterpolationRef.current) {
               const smoothingFactor = 0.5; // Adjust this value to control the smoothing speed
-              posePositionRef.current = posePositionRef.current.lerp(targetPosition, smoothingFactor);
-              poseRotationRef.current = poseRotationRef.current.normalize().slerp(targetRotation, smoothingFactor).normalize();
-            }
-            else {
+              posePositionRef.current = posePositionRef.current.lerp(
+                targetPosition,
+                smoothingFactor
+              );
+              poseRotationRef.current = poseRotationRef.current
+                .normalize()
+                .slerp(targetRotation, smoothingFactor)
+                .normalize();
+            } else {
               posePositionRef.current = targetPosition;
               poseRotationRef.current = targetRotation;
             }
@@ -122,7 +160,7 @@ const CameraView = () => {
             //   lookControls.setAttribute("look-controls", "enabled: true");
             //   isFirstFrameLostPoseRef.current = false;
             // }
-            
+
             // if (!previousLookRotationRef.current.equals(currentLookRotation)) {
             //   previousLookRotationRef.current.normalize();
             //   currentLookRotation.normalize();
@@ -135,7 +173,7 @@ const CameraView = () => {
             // }
 
             // previousLookRotationRef.current.copy(currentLookRotation);
-            
+
             if (showFeaturesRef.current) {
               drawFramePoints(false);
             }
@@ -155,43 +193,58 @@ const CameraView = () => {
     };
 
     if (!isSLAMInitializedRef.current) {
-      isSLAMInitializedRef.current = true;  // Use ref to track if initialization has occurred
-      initializeSLAM().then(() => {
-        setIsSLAMInitialized(true); // Once SLAM is initialized, update the state to trigger rendering the debug content
-      }).catch((error) => {
-        console.error('Error initializing SLAM:', error);
-      });
+      isSLAMInitializedRef.current = true; // Use ref to track if initialization has occurred
+      initializeSLAM()
+        .then(() => {
+          setIsSLAMInitialized(true); // Once SLAM is initialized, update the state to trigger rendering the debug content
+        })
+        .catch((error) => {
+          console.error('Error initializing SLAM:', error);
+        });
     }
 
     const setCameraPosition = (position) => {
       camera.setAttribute('position', {
         x: position.x,
         y: position.y,
-        z: position.z
+        z: position.z,
       });
-    }
-    
+    };
+
     const setCameraRotation = (rotation) => {
       camera.setAttribute('quaternion-rotation', {
         x: rotation.x,
         y: rotation.y,
         z: rotation.z,
-        w: rotation.w
+        w: rotation.w,
       });
-    }
+    };
   }, []);
 
-  const onShowSLAMControlsToggle = (value) => setIsSLAMControlEnabled(value);
-  const onShowFeaturesToggle = (value) => showFeaturesRef.current = value;
-  const onInterpolationToggle = (value) => useInterpolationRef.current = value;
-  const onClaheToggle = (value) => isClaheEnabled = value;
-  const onP3pToggle = (value) => isP3pEnabled = value;
-  const onDebugToggle = (value) => isDebugEnabled = value;
-  const onVideoStabilisationToggle = (value) => isVideoStabilisationEnabled = value;
-  const onFrameMaxCellSizeChanged = (value) => frameMaxCellSize = value;
-  const onMapKeyframeFilteringRatioChanged = (value) => mapKeyframeFilteringRatio = value;
+  const onShowSLAMControlsToggle = (value) =>
+    setIsSLAMControlEnabled(value);
+  const onShowFeaturesToggle = (value) =>
+    (showFeaturesRef.current = value);
+  const onInterpolationToggle = (value) =>
+    (useInterpolationRef.current = value);
+  const onClaheToggle = (value) => (isClaheEnabled = value);
+  const onP3pToggle = (value) => (isP3pEnabled = value);
+  const onDebugToggle = (value) => (isDebugEnabled = value);
+  const onVideoStabilisationToggle = (value) =>
+    (isVideoStabilisationEnabled = value);
+  const onFrameMaxCellSizeChanged = (value) =>
+    (frameMaxCellSize = value);
+  const onMapKeyframeFilteringRatioChanged = (value) =>
+    (mapKeyframeFilteringRatio = value);
   function onApplyClicked() {
-    alvaRef.current.reconfigure(frameMaxCellSize, mapKeyframeFilteringRatio, isP3pEnabled, isClaheEnabled, isVideoStabilisationEnabled, isDebugEnabled);
+    alvaRef.current.reconfigure(
+      frameMaxCellSize,
+      mapKeyframeFilteringRatio,
+      isP3pEnabled,
+      isClaheEnabled,
+      isVideoStabilisationEnabled,
+      isDebugEnabled
+    );
   }
 
   return (
@@ -202,19 +255,22 @@ const CameraView = () => {
           <Toggle
             onToggle={onShowSLAMControlsToggle}
             defaultState={isDebugEnabled}
-            activeColor={"#E79023"}
-            label={`Show SLAM Controls`} />
+            activeColor={'#E79023'}
+            label={`Show SLAM Controls`}
+          />
           {isSLAMControlEnabled && (
             <>
               {/* JS Side */}
               <Toggle
                 onToggle={onShowFeaturesToggle}
                 defaultState={true}
-                label={`Show Features`} />
+                label={`Show Features`}
+              />
               <Toggle
                 onToggle={onInterpolationToggle}
                 defaultState={true}
-                label={`Use Interpolation`} />
+                label={`Use Interpolation`}
+              />
               {/* SLAM Side */}
               <Slider
                 onValueChanged={onFrameMaxCellSizeChanged}
@@ -222,33 +278,37 @@ const CameraView = () => {
                 maxValue={100}
                 defaultValue={frameMaxCellSize}
                 step={1}
-                label={"Frame Max Cell Size:"} />
+                label={'Frame Max Cell Size:'}
+              />
               <Slider
                 onValueChanged={onMapKeyframeFilteringRatioChanged}
                 minValue={0}
                 maxValue={1}
                 defaultValue={mapKeyframeFilteringRatio}
                 step={0.01}
-                label={"Map Keyframe Filtering Ratio:"} />
+                label={'Map Keyframe Filtering Ratio:'}
+              />
               <Toggle
                 onToggle={onClaheToggle}
                 defaultState={isClaheEnabled}
-                label={"Use CLAHE"} />
+                label={'Use CLAHE'}
+              />
               <Toggle
                 onToggle={onP3pToggle}
                 defaultState={isP3pEnabled}
-                label={"Use P3P"} />
+                label={'Use P3P'}
+              />
               <Toggle
                 onToggle={onVideoStabilisationToggle}
                 defaultState={isDebugEnabled}
-                label={"Use Video Stabilisation"} />
+                label={'Use Video Stabilisation'}
+              />
               <Toggle
                 onToggle={onDebugToggle}
                 defaultState={isDebugEnabled}
-                label={"Show Debug Logs"} />
-              <Button
-                onClick={onApplyClicked}
-                label={"APPLY"} />
+                label={'Show Debug Logs'}
+              />
+              <Button onClick={onApplyClicked} label={'APPLY'} />
             </>
           )}
         </div>

@@ -18,7 +18,7 @@ const CameraView = () => {
       const [{ AlvaAR }, { Camera, resize2cover, onFrame }] =
         await Promise.all([
           import('@/slam/assets/alva_ar.js'),
-          import('@/slam/assets/utils.js')
+          import('@/slam/assets/utils.js'),
         ]);
 
       const $container = containerRef.current;
@@ -47,10 +47,20 @@ const CameraView = () => {
       $video.style.width = `${size.width}px`;
       $video.style.height = `${size.height}px`;
 
-      const alva = await AlvaAR.Initialize($canvas.width, $canvas.height);
-      document.body.addEventListener('click', () => alva.reset(), false);
-      
-      const ctx = $canvas.getContext('2d', { alpha: false, desynchronized: true });
+      const alva = await AlvaAR.Initialize(
+        $canvas.width,
+        $canvas.height
+      );
+      document.body.addEventListener(
+        'click',
+        () => alva.reset(),
+        false
+      );
+
+      const ctx = $canvas.getContext('2d', {
+        alpha: false,
+        desynchronized: true,
+      });
       onFrame(() => {
         ctx.clearRect(0, 0, $canvas.width, $canvas.height);
 
@@ -76,7 +86,7 @@ const CameraView = () => {
 
           // Have Pose
           if (pose) {
-            console.log("have");
+            console.log('have');
             const t = new THREE.Vector3(pose[12], pose[13], pose[14]);
             // const m = new THREE.Matrix4().fromArray(pose);
             // const r = new THREE.Quaternion().setFromRotationMatrix(m);
@@ -84,18 +94,18 @@ const CameraView = () => {
             // camera.setAttribute('rotation', `${-r.x} ${r.y} ${r.z}`);
 
             if (isFirstPose.current == true) {
-              looker.setAttribute('position', "0 0 0");
-              
-              const currentLookRotation = looker.getAttribute('rotation');
+              looker.setAttribute('position', '0 0 0');
+
+              const currentLookRotation =
+                looker.getAttribute('rotation');
               camera.setAttribute('rotation', {
                 x: -currentLookRotation.x,
                 y: -currentLookRotation.y,
-                z: -currentLookRotation.z
+                z: -currentLookRotation.z,
               });
-              
+
               isFirstPose.current = false;
-            }
-            else {
+            } else {
               const positionDelta = {
                 x: t.x - previousPosition.current.x,
                 y: t.y - previousPosition.current.y,
@@ -112,7 +122,7 @@ const CameraView = () => {
           }
           // Lost Pose
           else {
-            console.log("lost");
+            console.log('lost');
             isFirstPose.current = true;
 
             const dots = alva.getFramePoints();
@@ -127,8 +137,7 @@ const CameraView = () => {
       }, 30);
     };
 
-    if (!isSLAMInitialized.current)
-    {
+    if (!isSLAMInitialized.current) {
       initializeSLAM().catch((error) => {
         console.error('Error initializing SLAM:', error);
       });
