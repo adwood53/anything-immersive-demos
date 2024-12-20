@@ -90,17 +90,17 @@ function Camera({ config = {} }) {
   }, [config]);
 
   return (
-    // <a-entity position={position} wasd-controls={`enabled: ${enableWASD}`} look-controls={`enabled: ${enableLook}`}>
-    //   <a-camera
-    //     camera={'active: true; fov: 75; near: 0.01; far: 1000;'}
-    //     ref={cameraRef}
-    //     position="0 0 0"
-    //     rotation
-    //     quaternion-rotation
-    //     wasd-controls={`enabled: false`}
-    //     look-controls={`enabled: false`}
-    //   ></a-camera>
-    // </a-entity>
+    <a-entity position={position} wasd-controls={`enabled: ${enableWASD}`} look-controls={`enabled: ${enableLook}`}>
+      <a-camera
+        camera={'active: true; fov: 75; near: 0.01; far: 1000;'}
+        ref={cameraRef}
+        position="0 0 0"
+        rotation
+        quaternion-rotation
+        wasd-controls={`enabled: false`}
+        look-controls={`enabled: false`}
+      ></a-camera>
+    </a-entity>
 
     // <>
     //   <a-entity id="camera-controls" position={position} rotation wasd-controls={`enabled: ${enableWASD}`} look-controls={`enabled: false`}></a-entity>
@@ -118,22 +118,12 @@ function Camera({ config = {} }) {
     // <a-camera
     //   camera={'active: true; fov: 75; near: 0.01; far: 1000;'}
     //   ref={cameraRef}
-    //   position="0 0 0"
-    //   rotation
+    //   position={position}
+    //   rotation={rotation}
     //   quaternion-rotation
-    //   wasd-controls={`enabled: false`}
-    //   look-controls={`enabled: false`}
+    //   wasd-controls={`enabled: ${enableWASD}`}
+    //   look-controls={`enabled: ${enableLook}`}
     // ></a-camera>
-
-    <a-camera
-      camera={'active: true; fov: 75; near: 0.01; far: 1000;'}
-      ref={cameraRef}
-      position={position}
-      rotation={rotation}
-      quaternion-rotation
-      wasd-controls={`enabled: ${enableWASD}`}
-      look-controls={`enabled: ${enableLook}`}
-    ></a-camera>
   );
 }
 

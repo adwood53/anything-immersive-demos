@@ -13,7 +13,8 @@ const CameraView = () => {
   const isSLAMInitializedRef = useRef(false);
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
-  const camera = useRef(null);
+  const cameraRef = useRef(null);
+  const cameraParentRef = useRef(null);
   const isFirstFrameLostPoseRef = useRef(true);
   const posePositionRef = useRef(new THREE.Vector3(0, 0, 0));
   const poseRotationRef = useRef(new THREE.Quaternion(0, 0, 0, 1));
@@ -33,9 +34,9 @@ const CameraView = () => {
   const [isDebugEnabled, setIsDebugEnabled] = useState(false);
 
   useEffect(() => {
-    camera.current = document.querySelector('a-camera');
-    camera.current.setAttribute("look-controls", `enabled: ${useDeviceOrientationRef.current}`);
-    // const lookControls = document.getElementById('camera-controls');
+    cameraRef.current = document.querySelector('a-camera');
+    cameraParentRef.current = cameraRef.current.parentNode;
+    cameraParentRef.current.setAttribute("look-controls", `enabled: ${useDeviceOrientationRef.current}`);
 
     const initializeSLAM = async () => {
       const [{ AlvaAR }, { Camera, resize2cover, onFrame }] =
@@ -93,7 +94,7 @@ const CameraView = () => {
           // const currentLookRotation = lookControls.object3D.quaternion;
           if (pose) {
             // if (isFirstFrameLostPoseRef.current == false) {
-            //   lookControls.setAttribute("look-controls", "enabled: false");
+            //   // lookControls.setAttribute("look-controls", "enabled: false");
             //   isFirstFrameLostPoseRef.current = true;
             // }
             
@@ -105,11 +106,15 @@ const CameraView = () => {
             targetPosition.z = -targetPosition.z;
             targetRotation.x = -targetRotation.x;
 
+            if (isFirstFrameLostPoseRef.current == false && useDeviceOrientationRef.current) {
+              setCameraRotation(targetRotation);
+              isFirstFrameLostPoseRef.current = true;
+            }
+
             if (useInterpolationRef.current) {
               const smoothingFactor = 0.5; // Adjust this value to control the smoothing speed
               posePositionRef.current = posePositionRef.current.lerp(targetPosition, smoothingFactor);
               if (!useDeviceOrientationRef.current) {
-                console.log("rot");
                 poseRotationRef.current = poseRotationRef.current.normalize().slerp(targetRotation, smoothingFactor).normalize();
               }
             }
@@ -129,10 +134,10 @@ const CameraView = () => {
               drawFramePoints(true);
             }
           } else {
-            // if (isFirstFrameLostPoseRef.current == true) {
-            //   lookControls.setAttribute("look-controls", "enabled: true");
-            //   isFirstFrameLostPoseRef.current = false;
-            // }
+            if (isFirstFrameLostPoseRef.current == true) {
+              // lookControls.setAttribute("look-controls", "enabled: true");
+              isFirstFrameLostPoseRef.current = false;
+            }
             
             // if (!previousLookRotationRef.current.equals(currentLookRotation)) {
             //   previousLookRotationRef.current.normalize();
@@ -175,7 +180,7 @@ const CameraView = () => {
     }
 
     const setCameraPosition = (position) => {
-      camera.current.setAttribute('position', {
+      cameraParentRef.current.setAttribute('position', {
         x: position.x,
         y: position.y,
         z: position.z
@@ -183,7 +188,7 @@ const CameraView = () => {
     }
     
     const setCameraRotation = (rotation) => {
-      camera.current.setAttribute('quaternion-rotation', {
+      cameraRef.current.setAttribute('quaternion-rotation', {
         x: rotation.x,
         y: rotation.y,
         z: rotation.z,
@@ -197,8 +202,8 @@ const CameraView = () => {
   const onInterpolationToggle = (value) => useInterpolationRef.current = value;
   function onDeviceOrientationToggle(value) {
     useDeviceOrientationRef.current = value;
-    if (camera.current != null) {
-      camera.current.setAttribute("look-controls", `enabled: ${value}`);
+    if (cameraParentRef.current != null) {
+      cameraParentRef.current.setAttribute("look-controls", `enabled: ${value}`);
     }
   }
   const onClaheToggle = (value) => setIsClaheEnabled(value);
