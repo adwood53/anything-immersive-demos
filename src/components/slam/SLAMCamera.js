@@ -22,12 +22,12 @@ const CameraView = () => {
   const useInterpolationRef = useRef(true);
 
   // Default SLAM Settings
-  let frameMaxCellSize = 40;
-  let mapKeyframeFilteringRatio = 0.95;
-  let isP3pEnabled = true;
-  let isClaheEnabled = false;
-  let isVideoStabilisationEnabled = false;
-  let isDebugEnabled = false;
+  const [frameMaxCellSize, setFrameMaxCellSize] = useState(40);
+  const [mapKeyframeFilteringRatio, setMapKeyframeFilteringRatio] = useState(0.95);
+  const [isP3pEnabled, setIsP3pEnabled] = useState(true);
+  const [isClaheEnabled, setIsClaheEnabled] = useState(false);
+  const [isVideoStabilisationEnabled, setIsVideoStabilisationEnabled] = useState(false);
+  const [isDebugEnabled, setIsDebugEnabled] = useState(false);
 
   useEffect(() => {
     const camera = document.querySelector('a-camera');
@@ -184,12 +184,12 @@ const CameraView = () => {
   const onShowSLAMControlsToggle = (value) => setIsSLAMControlEnabled(value);
   const onShowFeaturesToggle = (value) => showFeaturesRef.current = value;
   const onInterpolationToggle = (value) => useInterpolationRef.current = value;
-  const onClaheToggle = (value) => isClaheEnabled = value;
-  const onP3pToggle = (value) => isP3pEnabled = value;
-  const onDebugToggle = (value) => isDebugEnabled = value;
-  const onVideoStabilisationToggle = (value) => isVideoStabilisationEnabled = value;
-  const onFrameMaxCellSizeChanged = (value) => frameMaxCellSize = value;
-  const onMapKeyframeFilteringRatioChanged = (value) => mapKeyframeFilteringRatio = value;
+  const onClaheToggle = (value) => setIsClaheEnabled(value);
+  const onP3pToggle = (value) => setIsP3pEnabled(value);
+  const onDebugToggle = (value) => setIsDebugEnabled(value);
+  const onVideoStabilisationToggle = (value) => setIsVideoStabilisationEnabled(value);
+  const onFrameMaxCellSizeChanged = (value) => setFrameMaxCellSize(value);
+  const onMapKeyframeFilteringRatioChanged = (value) => setMapKeyframeFilteringRatio(value);
   function onApplyClicked() {
     alvaRef.current.reconfigure(frameMaxCellSize, mapKeyframeFilteringRatio, isP3pEnabled, isClaheEnabled, isVideoStabilisationEnabled, isDebugEnabled);
   }
@@ -209,11 +209,11 @@ const CameraView = () => {
               {/* JS Side */}
               <Toggle
                 onToggle={onShowFeaturesToggle}
-                defaultState={true}
+                defaultState={showFeaturesRef.current}
                 label={`Show Features`} />
               <Toggle
                 onToggle={onInterpolationToggle}
-                defaultState={true}
+                defaultState={useInterpolationRef.current}
                 label={`Use Interpolation`} />
               {/* SLAM Side */}
               <Slider
