@@ -106,8 +106,10 @@ const CameraView = () => {
             targetPosition.z = -targetPosition.z;
             targetRotation.x = -targetRotation.x;
 
-            if (isFirstFrameLostPoseRef.current == false && useDeviceOrientationRef.current) {
-              setCameraRotation(targetRotation);
+            if (isFirstFrameLostPoseRef.current == false) {
+              if (useDeviceOrientationRef.current) {
+                setCameraRotation(targetRotation);
+              }
               isFirstFrameLostPoseRef.current = true;
             }
 
