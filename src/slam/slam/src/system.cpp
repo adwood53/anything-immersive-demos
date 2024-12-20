@@ -8,13 +8,20 @@ System::System() { }
 System::~System() { }
 
 // Initializes the SLAM system with camera parameters
-void System::configure(int imageWidth, int imageHeight, double fx, double fy, double cx, double cy, double k1, double k2, double p1, double p2, int frameMaxCellSize, float mapKeyframeFilteringRatio, bool p3pEnabled, bool claheEnabled, bool debugEnabled)
+void System::configure(int imageWidth, int imageHeight, double fx, double fy, double cx, double cy, double k1, double k2, double p1, double p2,
+    int frameMaxCellSize,
+    float mapKeyframeFilteringRatio,
+    bool p3pEnabled,
+    bool claheEnabled,
+    bool videoStabilisationEnabled,
+    bool debugEnabled)
 {
     // Initialize system state with image dimensions and cell size for feature detection
     state_ = std::make_shared<State>(imageWidth, imageHeight, frameMaxCellSize);
     state_->mapKeyframeFilteringRatio_ = mapKeyframeFilteringRatio;  // Controls keyframe selection threshold
-    state_->claheEnabled_ = claheEnabled;  // CLAHE = Contrast Limited Adaptive Histogram Equalization
     state_->p3pEnabled_ = p3pEnabled;  // Perspective-3-Point algorithm for pose estimation
+    state_->claheEnabled_ = claheEnabled;  // CLAHE = Contrast Limited Adaptive Histogram Equalization
+    state_->videoStabilisationEnabled_ = videoStabilisationEnabled;
     state_->debug_ = debugEnabled;
 
     // Log configuration parameters
@@ -130,50 +137,65 @@ int System::findCameraPose(int imageRGBADataPtr, int posePtr)
     cv::Mat image = cv::Mat(state_->imgHeight_, state_->imgWidth_, CV_8UC4, imageData);
     cv::cvtColor(image, image, cv::COLOR_RGBA2GRAY);
 
-
-
-    // Stabilization variables
-    static cv::Mat prevFrame;
-    static cv::Mat cumulativeTransform = cv::Mat::eye(3, 3, CV_32F);
-
-    if (!prevFrame.empty())
+    if (state_->videoStabilisationEnabled_)
     {
-        // Find motion between previous frame and current frame
-        std::vector<cv::Point2f> prevPoints, currPoints;
-        cv::goodFeaturesToTrack(prevFrame, prevPoints, 200, 0.01, 30);
-        std::vector<uchar> status;
-        std::vector<float> err;
-        cv::calcOpticalFlowPyrLK(prevFrame, image, prevPoints, currPoints, status, err);
+        // Stabilization variables
+        static cv::Mat prevFrame;
+        static cv::Mat cumulativeTransform = cv::Mat::eye(3, 3, CV_32F);
 
-        // Filter valid points
-        std::vector<cv::Point2f> validPrevPoints, validCurrPoints;
-        for (size_t i = 0; i < status.size(); ++i)
+        if (!prevFrame.empty())
         {
-            if (status[i])
+            // Find motion between previous frame and current frame
+            std::vector<cv::Point2f> prevPoints, currPoints;
+            cv::goodFeaturesToTrack(prevFrame, prevPoints, 200, 0.01, 30);
+            if (state_->debug_)
             {
-                validPrevPoints.push_back(prevPoints[i]);
-                validCurrPoints.push_back(currPoints[i]);
+                std::cout << "[System (Video Stabilisation)] Detected " << prevPoints.size() << " points in the previous frame." << std::endl;
+            }
+            std::vector<uchar> status;
+            std::vector<float> err;
+            cv::calcOpticalFlowPyrLK(prevFrame, image, prevPoints, currPoints, status, err);
+
+            // Filter valid points
+            std::vector<cv::Point2f> validPrevPoints, validCurrPoints;
+            for (size_t i = 0; i < status.size(); ++i)
+            {
+                if (status[i])
+                {
+                    validPrevPoints.push_back(prevPoints[i]);
+                    validCurrPoints.push_back(currPoints[i]);
+                }
+            }
+
+            if (!validPrevPoints.empty())
+            {
+                // Estimate affine transformation
+                cv::Mat transform = cv::estimateAffinePartial2D(validPrevPoints, validCurrPoints);
+
+                // Update cumulative transform
+                cv::Mat tempTransform = cv::Mat::eye(3, 3, CV_32F);
+                transform.copyTo(tempTransform(cv::Rect(0, 0, 3, 2)));
+                cumulativeTransform = cumulativeTransform * tempTransform;
+
+                // Apply stabilization
+                cv::warpAffine(image, image, cumulativeTransform(cv::Rect(0, 0, 3, 2)), image.size());
+                if (state_->debug_)
+                {
+                    std::cout << "[System (Video Stabilisation)] Stabilization applied." << std::endl;
+                }
+            }
+            else
+            {
+                if (state_->debug_)
+                {
+                    std::cout << "[System (Video Stabilisation)] No valid points for transformation." << std::endl;
+                }
             }
         }
 
-        if (!validPrevPoints.empty())
-        {
-            // Estimate affine transformation
-            cv::Mat transform = cv::estimateAffinePartial2D(validPrevPoints, validCurrPoints);
-
-            // Update cumulative transform
-            cv::Mat tempTransform = cv::Mat::eye(3, 3, CV_32F);
-            transform.copyTo(tempTransform(cv::Rect(0, 0, 3, 2)));
-            cumulativeTransform = cumulativeTransform * tempTransform;
-
-            // Apply stabilization
-            cv::warpAffine(image, image, cumulativeTransform(cv::Rect(0, 0, 3, 2)), image.size());
-        }
+        // Store the current frame as the previous frame for the next iteration
+        prevFrame = image.clone();
     }
-
-    // Store the current frame as the previous frame for the next iteration
-    prevFrame = image.clone();
-
 
     uint64_t timestamp = duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 

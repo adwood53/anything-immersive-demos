@@ -44,7 +44,7 @@ class SharedMemory
 
 class AlvaAR
 {
-    static async Initialize( width, height, fov = 45, frameMaxCellSize, mapKeyframeFilteringRatio = 0.95, p3pEnabled = true, claheEnabled = false, debugEnabled = false)
+    static async Initialize( width, height, fov = 45, frameMaxCellSize, mapKeyframeFilteringRatio = 0.95, p3pEnabled = true, claheEnabled = false, videoStabilisationEnabled = false, debugEnabled = false)
     {
         const wasm = {};
 
@@ -52,10 +52,10 @@ class AlvaAR
 
         await wasm.ready;
 
-        return new AlvaAR( wasm, width, height, fov, frameMaxCellSize, mapKeyframeFilteringRatio, p3pEnabled, claheEnabled, debugEnabled );
+        return new AlvaAR( wasm, width, height, fov, frameMaxCellSize, mapKeyframeFilteringRatio, p3pEnabled, claheEnabled, videoStabilisationEnabled, debugEnabled );
     }
 
-    constructor( wasm, width, height, fov, frameMaxCellSize, mapKeyframeFilteringRatio, p3pEnabled, claheEnabled, debugEnabled)
+    constructor( wasm, width, height, fov, frameMaxCellSize, mapKeyframeFilteringRatio, p3pEnabled, claheEnabled, videoStabilisationEnabled, debugEnabled)
     {
         this.wasm = wasm;
         this.intrinsics = this.getCameraIntrinsics( width, height, fov );
@@ -82,11 +82,12 @@ class AlvaAR
             mapKeyframeFilteringRatio,
             p3pEnabled,
             claheEnabled,
+            videoStabilisationEnabled,
             debugEnabled
         );
     }
 
-    reconfigure(frameMaxCellSize, mapKeyframeFilteringRatio, p3pEnabled, claheEnabled, debugEnabled) {
+    reconfigure(frameMaxCellSize, mapKeyframeFilteringRatio, p3pEnabled, claheEnabled, videoStabilisationEnabled, debugEnabled) {
         this.system.configure(
             this.intrinsics.width,
             this.intrinsics.height,
@@ -102,6 +103,7 @@ class AlvaAR
             mapKeyframeFilteringRatio,
             p3pEnabled,
             claheEnabled,
+            videoStabilisationEnabled,
             debugEnabled
         );
     }

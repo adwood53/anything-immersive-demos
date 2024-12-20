@@ -9,6 +9,7 @@ import Button from '@/components/Button';
 const CameraView = () => {
   const isSLAMInitializedRef = useRef(false);  // To track initialization status
   const [isSLAMInitialized, setIsSLAMInitialized] = useState(false);  // State for rendering debug content
+  const [isSLAMControlEnabled, setIsSLAMControlEnabled] = useState(false);  // State for rendering debug content
 
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
@@ -17,11 +18,15 @@ const CameraView = () => {
   const poseRotationRef = useRef(new THREE.Quaternion(0, 0, 0, 1));
   const previousLookRotationRef = useRef(new THREE.Quaternion(0, 0, 0, 1));
   const alvaRef = useRef(null);
+  const showFeaturesRef = useRef(true);
+  const useInterpolationRef = useRef(true);
 
+  // Default SLAM Settings
   let frameMaxCellSize = 40;
   let mapKeyframeFilteringRatio = 0.95;
-  let isClaheEnabled = false;
   let isP3pEnabled = true;
+  let isClaheEnabled = false;
+  let isVideoStabilisationEnabled = false;
   let isDebugEnabled = false;
 
   useEffect(() => {
@@ -88,7 +93,6 @@ const CameraView = () => {
             //   isFirstFrameLostPoseRef.current = true;
             // }
             
-            const smoothingFactor = 0.5; // Adjust this value to control the smoothing speed
             const targetPosition = new THREE.Vector3(pose[12], pose[13], pose[14]);
             const poseMatrix = new THREE.Matrix4().fromArray(pose);
             const targetRotation = new THREE.Quaternion().setFromRotationMatrix(poseMatrix).normalize();
@@ -97,11 +101,22 @@ const CameraView = () => {
             targetPosition.z = -targetPosition.z;
             targetRotation.x = -targetRotation.x;
 
-            posePositionRef.current = posePositionRef.current.lerp(targetPosition, smoothingFactor);
-            poseRotationRef.current = poseRotationRef.current.normalize().slerp(targetRotation, smoothingFactor).normalize();
+            if (useInterpolationRef.current) {
+              const smoothingFactor = 0.5; // Adjust this value to control the smoothing speed
+              posePositionRef.current = posePositionRef.current.lerp(targetPosition, smoothingFactor);
+              poseRotationRef.current = poseRotationRef.current.normalize().slerp(targetRotation, smoothingFactor).normalize();
+            }
+            else {
+              posePositionRef.current = targetPosition;
+              poseRotationRef.current = targetRotation;
+            }
 
             setCameraPosition(posePositionRef.current);
             setCameraRotation(poseRotationRef.current);
+
+            if (showFeaturesRef.current) {
+              drawFramePoints(true);
+            }
           } else {
             // if (isFirstFrameLostPoseRef.current == true) {
             //   lookControls.setAttribute("look-controls", "enabled: true");
@@ -121,16 +136,22 @@ const CameraView = () => {
 
             // previousLookRotationRef.current.copy(currentLookRotation);
             
-            const dots = alva.getFramePoints();
-            for (const p of dots) {
-              ctx.fillStyle = 'white';
-              ctx.fillRect(p.x, p.y, 2, 2);
+            if (showFeaturesRef.current) {
+              drawFramePoints(false);
             }
           }
         }
 
         return true;
       }, 30);
+
+      function drawFramePoints(hasPose) {
+        const dots = alva.getFramePoints();
+        for (const p of dots) {
+          ctx.fillStyle = hasPose ? '#bdffc0' : '#ff7575';
+          ctx.fillRect(p.x, p.y, 2, 2);
+        }
+      }
     };
 
     if (!isSLAMInitializedRef.current) {
@@ -160,28 +181,17 @@ const CameraView = () => {
     }
   }, []);
 
-  const onClaheToggle = (value) => {
-    isClaheEnabled = value;
-  };
-
-  const onP3pToggle = (value) => {
-    isP3pEnabled = value;
-  };
-
-  const onDebugToggle = (value) => {
-    isDebugEnabled = value;
-  };
-  
-  const onFrameMaxCellSizeChanged = (value) => {
-    frameMaxCellSize = value;
-  };
-
-  const onMapKeyframeFilteringRatioChanged = (value) => {
-    mapKeyframeFilteringRatio = value;
-  };
-
+  const onShowSLAMControlsToggle = (value) => setIsSLAMControlEnabled(value);
+  const onShowFeaturesToggle = (value) => showFeaturesRef.current = value;
+  const onInterpolationToggle = (value) => useInterpolationRef.current = value;
+  const onClaheToggle = (value) => isClaheEnabled = value;
+  const onP3pToggle = (value) => isP3pEnabled = value;
+  const onDebugToggle = (value) => isDebugEnabled = value;
+  const onVideoStabilisationToggle = (value) => isVideoStabilisationEnabled = value;
+  const onFrameMaxCellSizeChanged = (value) => frameMaxCellSize = value;
+  const onMapKeyframeFilteringRatioChanged = (value) => mapKeyframeFilteringRatio = value;
   function onApplyClicked() {
-    alvaRef.current.reconfigure(frameMaxCellSize, mapKeyframeFilteringRatio, isP3pEnabled, isClaheEnabled, isDebugEnabled);
+    alvaRef.current.reconfigure(frameMaxCellSize, mapKeyframeFilteringRatio, isP3pEnabled, isClaheEnabled, isVideoStabilisationEnabled, isDebugEnabled);
   }
 
   return (
@@ -189,37 +199,58 @@ const CameraView = () => {
       {/* Render the debug content only when SLAM is initialized */}
       {isSLAMInitialized && (
         <div className={`${styles.debugContainer}`}>
-          <Slider
-            onValueChanged={onFrameMaxCellSizeChanged}
-            minValue={10}
-            maxValue={100}
-            defaultValue={frameMaxCellSize}
-            step={1}
-            label={"Frame Max Cell Size:"}>
-          </Slider>
-          <Slider
-            onValueChanged={onMapKeyframeFilteringRatioChanged}
-            minValue={0}
-            maxValue={1}
-            defaultValue={mapKeyframeFilteringRatio}
-            step={0.01}
-            label={"Map Keyframe Filtering Ratio:"}>
-          </Slider>
           <Toggle
-            onToggle={onClaheToggle}
-            defaultState={isClaheEnabled}
-            label={"Use CLAHE"} />
-          <Toggle
-            onToggle={onP3pToggle}
-            defaultState={isP3pEnabled}
-            label={"Use P3P"} />
-          <Toggle
-            onToggle={onDebugToggle}
+            onToggle={onShowSLAMControlsToggle}
             defaultState={isDebugEnabled}
-            label={"Debug Logs"} />
-          <Button
-            onClick={onApplyClicked}
-            label={"APPLY"} />
+            activeColor={"#E79023"}
+            label={`Show SLAM Controls`} />
+          {isSLAMControlEnabled && (
+            <>
+              {/* JS Side */}
+              <Toggle
+                onToggle={onShowFeaturesToggle}
+                defaultState={true}
+                label={`Show Features`} />
+              <Toggle
+                onToggle={onInterpolationToggle}
+                defaultState={true}
+                label={`Use Interpolation`} />
+              {/* SLAM Side */}
+              <Slider
+                onValueChanged={onFrameMaxCellSizeChanged}
+                minValue={10}
+                maxValue={100}
+                defaultValue={frameMaxCellSize}
+                step={1}
+                label={"Frame Max Cell Size:"} />
+              <Slider
+                onValueChanged={onMapKeyframeFilteringRatioChanged}
+                minValue={0}
+                maxValue={1}
+                defaultValue={mapKeyframeFilteringRatio}
+                step={0.01}
+                label={"Map Keyframe Filtering Ratio:"} />
+              <Toggle
+                onToggle={onClaheToggle}
+                defaultState={isClaheEnabled}
+                label={"Use CLAHE"} />
+              <Toggle
+                onToggle={onP3pToggle}
+                defaultState={isP3pEnabled}
+                label={"Use P3P"} />
+              <Toggle
+                onToggle={onVideoStabilisationToggle}
+                defaultState={isDebugEnabled}
+                label={"Use Video Stabilisation"} />
+              <Toggle
+                onToggle={onDebugToggle}
+                defaultState={isDebugEnabled}
+                label={"Show Debug Logs"} />
+              <Button
+                onClick={onApplyClicked}
+                label={"APPLY"} />
+            </>
+          )}
         </div>
       )}
 

@@ -58,6 +58,9 @@ public:
     float trackerMaxPxPrecision_ = 0.01;
     double extractorMaxQuality_ = 0.001;
 
+    // Video Stabilisation
+    bool videoStabilisationEnabled_ = false;
+
     // Map Filtering parameters
     float mapMaxDescriptorDistance_ = 0.2;
     float mapMaxProjectionPxDistance_ = 2.0;

@@ -1,7 +1,6 @@
 #include "system.hpp"
 #include <memory>
 #include <iostream>
-#include <opencv2/video/tracking.hpp>
 
 System::System()
 {
@@ -111,50 +110,6 @@ int System::findCameraPose(int imageRGBADataPtr, int posePtr)
 
     cv::Mat image = cv::Mat(state_->imgHeight_, state_->imgWidth_, CV_8UC4, imageData);
     cv::cvtColor(image, image, cv::COLOR_RGBA2GRAY);
-
-
-    // Stabilization variables
-    static cv::Mat prevFrame;
-    static cv::Mat cumulativeTransform = cv::Mat::eye(3, 3, CV_32F);
-
-    if (!prevFrame.empty())
-    {
-        // Find motion between previous frame and current frame
-        std::vector<cv::Point2f> prevPoints, currPoints;
-        cv::goodFeaturesToTrack(prevFrame, prevPoints, 200, 0.01, 30);
-        std::vector<uchar> status;
-        std::vector<float> err;
-        cv::calcOpticalFlowPyrLK(prevFrame, image, prevPoints, currPoints, status, err);
-
-        // Filter valid points
-        std::vector<cv::Point2f> validPrevPoints, validCurrPoints;
-        for (size_t i = 0; i < status.size(); ++i)
-        {
-            if (status[i])
-            {
-                validPrevPoints.push_back(prevPoints[i]);
-                validCurrPoints.push_back(currPoints[i]);
-            }
-        }
-
-        if (!validPrevPoints.empty())
-        {
-            // Estimate affine transformation
-            cv::Mat transform = cv::estimateAffinePartial2D(validPrevPoints, validCurrPoints);
-
-            // Update cumulative transform
-            cv::Mat tempTransform = cv::Mat::eye(3, 3, CV_32F);
-            transform.copyTo(tempTransform(cv::Rect(0, 0, 3, 2)));
-            cumulativeTransform = cumulativeTransform * tempTransform;
-
-            // Apply stabilization
-            cv::warpAffine(image, image, cumulativeTransform(cv::Rect(0, 0, 3, 2)), image.size());
-        }
-    }
-
-    // Store the current frame as the previous frame for the next iteration
-    prevFrame = image.clone();
-
 
     uint64_t timestamp = duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 

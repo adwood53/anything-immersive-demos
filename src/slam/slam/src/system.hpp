@@ -25,8 +25,14 @@ public:
 
     ~System();
 
-    void configure(int imageWidth, int imageHeight, double fx, double fy, double cx, double cy, double k1, double k2, double p1, double p2, int frameMaxCellSize, float mapKeyframeFilteringRatio, bool p3pEnabled, bool claheEnabled, bool debugEnabled);
-
+    void configure(int imageWidth, int imageHeight, double fx, double fy, double cx, double cy, double k1, double k2, double p1, double p2,
+    int frameMaxCellSize,
+    float mapKeyframeFilteringRatio,
+    bool p3pEnabled,
+    bool claheEnabled,
+    bool stabilisationEnabled,
+    bool debugEnabled);
+    
     void reset();
 
     int findCameraPoseWithIMU(int imageRGBADataPtr, int imuDataPtr, int posePtr);

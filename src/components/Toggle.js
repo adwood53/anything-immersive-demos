@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Label from "@/components/Label";
 
-function Toggle({ onToggle, defaultState = false, label }) {
+function Toggle({ onToggle, defaultState = false, activeColor = "#7466E2", label }) {
   const [isOn, setIsOn] = useState(false);
 
   useEffect(() => {
@@ -22,7 +22,7 @@ function Toggle({ onToggle, defaultState = false, label }) {
       <div
         style={{
           ...styles.toggle,
-          backgroundColor: isOn ? "#7466E2" : "#ccc",
+          backgroundColor: isOn ? activeColor : "#ccc",
         }}
         onClick={handleToggle}
       >
