@@ -204,6 +204,9 @@ const CameraView = () => {
     useDeviceOrientationRef.current = value;
     if (cameraParentRef.current != null) {
       cameraParentRef.current.setAttribute("look-controls", `enabled: ${value}`);
+      if (value == false) {
+        cameraParentRef.current.setAttribute("rotation", "0 0 0");
+      }
     }
   }
   const onClaheToggle = (value) => setIsClaheEnabled(value);

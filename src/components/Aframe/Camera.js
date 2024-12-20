@@ -95,7 +95,7 @@ function Camera({ config = {} }) {
         camera={'active: true; fov: 75; near: 0.01; far: 1000;'}
         ref={cameraRef}
         position="0 0 0"
-        rotation
+        rotation="0 0 0"
         quaternion-rotation
         wasd-controls={`enabled: false`}
         look-controls={`enabled: false`}
