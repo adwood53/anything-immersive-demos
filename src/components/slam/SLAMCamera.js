@@ -7,19 +7,22 @@ import Toggle from '@/components/Toggle';
 import Button from '@/components/Button';
 
 const CameraView = () => {
-  const isSLAMInitializedRef = useRef(false);  // To track initialization status
   const [isSLAMInitialized, setIsSLAMInitialized] = useState(false);  // State for rendering debug content
   const [isSLAMControlEnabled, setIsSLAMControlEnabled] = useState(false);  // State for rendering debug content
 
+  const isSLAMInitializedRef = useRef(false);
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
+  const camera = useRef(null);
   const isFirstFrameLostPoseRef = useRef(true);
   const posePositionRef = useRef(new THREE.Vector3(0, 0, 0));
   const poseRotationRef = useRef(new THREE.Quaternion(0, 0, 0, 1));
   const previousLookRotationRef = useRef(new THREE.Quaternion(0, 0, 0, 1));
   const alvaRef = useRef(null);
-  const showFeaturesRef = useRef(true);
+
+  const useDeviceOrientationRef = useRef(true);
   const useInterpolationRef = useRef(true);
+  const showFeaturesRef = useRef(true);
 
   // Default SLAM Settings
   const [frameMaxCellSize, setFrameMaxCellSize] = useState(40);
@@ -30,7 +33,8 @@ const CameraView = () => {
   const [isDebugEnabled, setIsDebugEnabled] = useState(false);
 
   useEffect(() => {
-    const camera = document.querySelector('a-camera');
+    camera.current = document.querySelector('a-camera');
+    camera.current.setAttribute("look-controls", `enabled: ${useDeviceOrientationRef.current}`);
     // const lookControls = document.getElementById('camera-controls');
 
     const initializeSLAM = async () => {
@@ -104,15 +108,22 @@ const CameraView = () => {
             if (useInterpolationRef.current) {
               const smoothingFactor = 0.5; // Adjust this value to control the smoothing speed
               posePositionRef.current = posePositionRef.current.lerp(targetPosition, smoothingFactor);
-              poseRotationRef.current = poseRotationRef.current.normalize().slerp(targetRotation, smoothingFactor).normalize();
+              if (!useDeviceOrientationRef.current) {
+                console.log("rot");
+                poseRotationRef.current = poseRotationRef.current.normalize().slerp(targetRotation, smoothingFactor).normalize();
+              }
             }
             else {
               posePositionRef.current = targetPosition;
-              poseRotationRef.current = targetRotation;
+              if (!useDeviceOrientationRef.current) {
+                poseRotationRef.current = targetRotation;
+              }
             }
 
             setCameraPosition(posePositionRef.current);
-            setCameraRotation(poseRotationRef.current);
+            if (!useDeviceOrientationRef.current) {
+              setCameraRotation(poseRotationRef.current);
+            }
 
             if (showFeaturesRef.current) {
               drawFramePoints(true);
@@ -164,7 +175,7 @@ const CameraView = () => {
     }
 
     const setCameraPosition = (position) => {
-      camera.setAttribute('position', {
+      camera.current.setAttribute('position', {
         x: position.x,
         y: position.y,
         z: position.z
@@ -172,7 +183,7 @@ const CameraView = () => {
     }
     
     const setCameraRotation = (rotation) => {
-      camera.setAttribute('quaternion-rotation', {
+      camera.current.setAttribute('quaternion-rotation', {
         x: rotation.x,
         y: rotation.y,
         z: rotation.z,
@@ -184,6 +195,12 @@ const CameraView = () => {
   const onShowSLAMControlsToggle = (value) => setIsSLAMControlEnabled(value);
   const onShowFeaturesToggle = (value) => showFeaturesRef.current = value;
   const onInterpolationToggle = (value) => useInterpolationRef.current = value;
+  function onDeviceOrientationToggle(value) {
+    useDeviceOrientationRef.current = value;
+    if (camera.current != null) {
+      camera.current.setAttribute("look-controls", `enabled: ${value}`);
+    }
+  }
   const onClaheToggle = (value) => setIsClaheEnabled(value);
   const onP3pToggle = (value) => setIsP3pEnabled(value);
   const onDebugToggle = (value) => setIsDebugEnabled(value);
@@ -208,13 +225,17 @@ const CameraView = () => {
             <>
               {/* JS Side */}
               <Toggle
-                onToggle={onShowFeaturesToggle}
-                defaultState={showFeaturesRef.current}
-                label={`Show Features`} />
-              <Toggle
                 onToggle={onInterpolationToggle}
                 defaultState={useInterpolationRef.current}
                 label={`Use Interpolation`} />
+              <Toggle
+                onToggle={onDeviceOrientationToggle}
+                defaultState={useDeviceOrientationRef.current}
+                label={`Use Device Orientation`} />
+              <Toggle
+                onToggle={onShowFeaturesToggle}
+                defaultState={showFeaturesRef.current}
+                label={`Show Features`} />
               {/* SLAM Side */}
               <Slider
                 onValueChanged={onFrameMaxCellSizeChanged}
