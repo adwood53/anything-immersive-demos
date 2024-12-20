@@ -17,7 +17,7 @@ function Camera({ config = {} }) {
   useEffect(() => {
     const camera = cameraRef.current; // Store the current ref value here
 
-    if (initCamPosition.current) {
+    if (initCamPosition) {
       camera.setAttribute('position', '0 0 0');
     }
 
@@ -57,24 +57,56 @@ function Camera({ config = {} }) {
   }, [config, raycaster.enabled, raycaster.far, raycaster.objects]);
 
   return (
+    // <a-entity position={position} wasd-controls={`enabled: ${enableWASD}`} look-controls={`enabled: ${enableLook}`}>
+    //   <a-camera
+    //     camera={'active: true; fov: 75; near: 0.01; far: 1000;'}
+    //     ref={cameraRef}
+    //     position="0 0 0"
+    //     rotation="0 0 0"
+    //     quaternion-rotation
+    //     wasd-controls={`enabled: false`}
+    //     look-controls={`enabled: false`}
+    //   ></a-camera>
+    // </a-entity>
+
     <>
       <a-entity
         id="camera-controls"
         position={position}
-        rotation={rotation}
+        rotation
         wasd-controls={`enabled: ${enableWASD}`}
-        look-controls={`enabled: ${enableLook}`}
+        look-controls={`enabled: false`}
       ></a-entity>
       <a-camera
-        camera="active: true; fov: 75; near: 0.01; far: 1000;"
+        camera={'active: true; fov: 75; near: 0.01; far: 1000;'}
         ref={cameraRef}
         position={position}
         rotation={rotation}
         quaternion-rotation
-        wasd-controls="enabled: false"
-        look-controls="enabled: false"
+        wasd-controls={`enabled: false`}
+        look-controls={`enabled: false`}
       ></a-camera>
     </>
+
+    // <a-camera
+    //   camera={'active: true; fov: 75; near: 0.01; far: 1000;'}
+    //   ref={cameraRef}
+    //   position="0 0 0"
+    //   rotation
+    //   quaternion-rotation
+    //   wasd-controls={`enabled: false`}
+    //   look-controls={`enabled: false`}
+    // ></a-camera>
+
+    //   <a-camera
+    //     camera={'active: true; fov: 75; near: 0.01; far: 1000;'}
+    //     ref={cameraRef}
+    //     position={position}
+    //     rotation={rotation}
+    //     quaternion-rotation
+    //     wasd-controls={`enabled: ${enableWASD}`}
+    //     look-controls={`enabled: ${enableLook}`}
+    //   ></a-camera>
   );
 }
 
