@@ -75,6 +75,8 @@
       "type": "a-video",
       "id": "myVideo",
       "src": "3D-Model-AR/Leicester of the future.mp4",
+      "muted": true,
+      "autoplay": true,
       "width": "2",
       "height": "1",
       "position": "0 1.6 -2"

@@ -135,7 +135,27 @@ function Scene({ template }) {
       case 'a-triangle':
         return <a-triangle key={key} {...props} />;
       case 'a-video':
-        return <a-video key={key} {...props} />;
+        // Handle video with iOS playback support
+        return (
+          <a-video
+            key={key}
+            {...props}
+            playsinline=""
+            webkit-playsinline=""
+            preload="auto"
+            crossOrigin="anonymous"
+            muted={props.muted || ''}
+            autoplay={props.autoplay || ''}
+            loop={props.loop || ''}
+            onClick={(evt) => {
+              const videoEl =
+                evt.target.components.material.material.map.image;
+              if (videoEl) {
+                videoEl.play();
+              }
+            }}
+          />
+        );
       case 'a-videosphere':
         return <a-videosphere key={key} {...props} />;
       default:
