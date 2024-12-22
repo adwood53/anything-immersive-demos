@@ -6,22 +6,78 @@
   },
   "camera" : {
     "enableWASD" : false,
-    "enableLook" : false
+    "enableLook" : false,
+    "position" : "0, 1.6, 0",
+    "raycaster": {
+      "enabled": true,
+      "far": 100,
+      "objects": ".interactable"
+    }
   },
   "lighting" : {
   },
   "objects" : [
     {
       "format" : "gltf",
-      "rotateY" : false,
+      "rotateY" : true,
       "rotateZ" : false,
       "modelId" : "prism",
       "assetId" : "prism",
-      "position" : "0 0 -10",
-      "scale" : "4 4 4",
+      "position" : "0 2.5 -2",
+      "scale" : "1 1 1",
+      "interactive" : true,
       "modelPosition" : "0 -0.25 0",
       "modelUrl": "3D-Model-AR/your-model.glb"
+    },
+    {
+      "format" : "gltf",
+      "rotateY" : false,
+      "rotateZ" : true,
+      "position" : "2 -0.5 -2",
+      "scale" : "1 1 1",
+      "modelPosition" : "0 0 0",
+      "rotation" : "0 -45 0",
+      "frustumCulled" : false,
+      "animationEnabled" : true,
+      "animationClip" : "mixamo.com|Layer0.001",
+      "useRegExp" : true,
+      "modelId" : "model1",
+      "assetId" : "model1",
+      "interactive" : true,
+      "highlightColor" : "00ff00",
+      "modelUrl": "3D-Model-VR/idle-automaton.glb"
+    },
+    {
+      "format" : "gltf",
+      "rotateY" : false,
+      "rotateZ" : true,
+      "position" : "-2 -0.5 -2",
+      "scale" : "1 1 1",
+      "modelPosition" : "0 0 0",
+      "rotation" : "0 45 0",
+      "frustumCulled" : false,
+      "animationEnabled" : true,
+      "animationClip" : "mixamo.com|Layer0.001",
+      "useRegExp" : true,
+      "modelId" : "model2",
+      "assetId" : "model1",
+      "interactive" : true,
+      "highlightColor" : "00ff00",
+      "modelUrl": "3D-Model-VR/idle-automaton.glb"
     }
   ],
-  "shadow" : {}
+  "shadow" : {},
+  "controlButtons" : {
+    "effectAll" : false
+  },
+  "primitives": [
+    {
+      "type": "a-video",
+      "id": "myVideo",
+      "src": "3D-Model-AR/Leicester of the future.mp4",
+      "width": "2",
+      "height": "1",
+      "position": "0 1.6 -2"
+    }
+  ]
 }

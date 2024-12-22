@@ -77,6 +77,75 @@ function Scene({ template }) {
     SLAMVideo,
   } = components;
 
+  const renderPrimitive = (primitive, index) => {
+    const { type, ...props } = primitive;
+    const key = props.id || `primitive-${index}`;
+
+    switch (type) {
+      case 'a-box':
+        return <a-box key={key} {...props} />;
+      case 'a-camera':
+        return <a-camera key={key} {...props} />;
+      case 'a-circle':
+        return <a-circle key={key} {...props} />;
+      case 'a-cone':
+        return <a-cone key={key} {...props} />;
+      case 'a-cursor':
+        return <a-cursor key={key} {...props} />;
+      case 'a-curvedimage':
+        return <a-curvedimage key={key} {...props} />;
+      case 'a-cylinder':
+        return <a-cylinder key={key} {...props} />;
+      case 'a-dodecahedron':
+        return <a-dodecahedron key={key} {...props} />;
+      case 'a-gltf-model':
+        // This is just a convenience primitive for GLTF;
+        // you might not need it if you prefer your ModelContainer.
+        return <a-gltf-model key={key} {...props} />;
+      case 'a-icosahedron':
+        return <a-icosahedron key={key} {...props} />;
+      case 'a-image':
+        return <a-image key={key} {...props} />;
+      case 'a-light':
+        return <a-light key={key} {...props} />;
+      case 'a-link':
+        return <a-link key={key} {...props} />;
+      case 'a-obj-model':
+        return <a-obj-model key={key} {...props} />;
+      case 'a-octahedron':
+        return <a-octahedron key={key} {...props} />;
+      case 'a-plane':
+        return <a-plane key={key} {...props} />;
+      case 'a-ring':
+        return <a-ring key={key} {...props} />;
+      case 'a-sky':
+        return <a-sky key={key} {...props} />;
+      case 'a-sound':
+        return <a-sound key={key} {...props} />;
+      case 'a-sphere':
+        return <a-sphere key={key} {...props} />;
+      case 'a-tetrahedron':
+        return <a-tetrahedron key={key} {...props} />;
+      case 'a-text':
+        return <a-text key={key} {...props} />;
+      case 'a-torus':
+        return <a-torus key={key} {...props} />;
+      case 'a-torus-knot':
+        return <a-torus-knot key={key} {...props} />;
+      case 'a-triangle':
+        return <a-triangle key={key} {...props} />;
+      case 'a-video':
+        return <a-video key={key} {...props} />;
+      case 'a-videosphere':
+        return <a-videosphere key={key} {...props} />;
+      default:
+        console.warn(
+          `Unsupported or unknown primitive type: ${type}`
+        );
+        return null;
+    }
+  };
+
   return (
     <>
       {SLAMCamera && <SLAMCamera />}
@@ -104,6 +173,8 @@ function Scene({ template }) {
         </a-assets>
         {Camera && <Camera config={template.camera} />}
         {Lighting && <Lighting />}
+        {/* Render A-Frame primitives from JSON */}
+        {template.primitives?.map(renderPrimitive)}
         {template.objects?.map((object) => (
           <ModelContainer key={object.modelId} config={object} />
         ))}
