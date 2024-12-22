@@ -2,7 +2,7 @@
   "background" : {
     "type" : "devicecamera",
     "facingMode" : "environment",
-    "useSlam" : true
+    "useSlam" : false
   },
   "camera" : {
     "enableWASD" : false,
