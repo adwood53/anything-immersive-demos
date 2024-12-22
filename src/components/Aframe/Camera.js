@@ -69,8 +69,6 @@ function Camera({ config = {} }) {
         position="0 0 0"
         rotation="0 0 0"
         quaternion-rotation
-        wasd-controls={`enabled: false`}
-        look-controls={`enabled: false`}
       ></a-camera>
     </a-entity>
 
